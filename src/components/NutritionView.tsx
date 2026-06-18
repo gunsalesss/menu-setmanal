@@ -3,6 +3,7 @@ import { checkNutrition } from '../core/nutrition'
 
 export function NutritionView() {
   const menu = useStore((s) => s.menu)
+  const fixNutrition = useStore((s) => s.fixNutrition)
   if (!menu) return null
   const results = checkNutrition(menu)
   const warnings = results.filter((r) => r.status === 'warn').length
@@ -22,6 +23,11 @@ export function NutritionView() {
               <strong>{r.label}</strong>
               <span className="rule-detail">{r.detail}</span>
             </span>
+            {r.status === 'warn' && r.id !== 'empty' && (
+              <button className="rule-fix" onClick={() => fixNutrition(r.id)}>
+                Arreglar
+              </button>
+            )}
           </li>
         ))}
       </ul>

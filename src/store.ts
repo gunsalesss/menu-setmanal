@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { AttendanceDay, Course, Person, PersonInfo, Slot, WeeklyMenu } from './core/types'
 import { DEFAULT_PEOPLE, MAX_PEOPLE, MIN_PEOPLE } from './core/types'
 import { generateMenu, rerollMeal } from './core/generate'
+import { fixRule } from './core/nutrition'
 
 const PEOPLE_KEY = 'menu-people'
 
@@ -65,6 +66,8 @@ interface State {
   removePerson: (person: Person) => void
   /** Manually set a specific dish for a meal's course (from the picker). */
   setDish: (date: string, slot: Slot, course: Course, dishId: string) => void
+  /** Resolve a nutritional alert by swapping dishes in the current menu. */
+  fixNutrition: (ruleId: string) => void
 }
 
 function buildRange(startISO: string, days: number, ids: Person[]): AttendanceDay[] {
@@ -174,4 +177,7 @@ export const useStore = create<State>((set) => ({
       )
       return { menu: { ...s.menu, days } }
     }),
+
+  fixNutrition: (ruleId) =>
+    set((s) => (s.menu ? { menu: fixRule(s.menu, ruleId) } : {})),
 }))

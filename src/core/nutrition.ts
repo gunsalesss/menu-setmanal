@@ -1,5 +1,5 @@
-import type { Dish, Tag, WeeklyMenu } from './types'
-import { dishById } from './dishes'
+import type { Course, Dish, Slot, Tag, WeeklyMenu } from './types'
+import { dishById, poolFor } from './dishes'
 
 export type RuleStatus = 'ok' | 'warn'
 
@@ -112,4 +112,166 @@ export function checkNutrition(menu: WeeklyMenu): RuleResult[] {
   })
 
   return results
+}
+
+// ── Auto-fix ────────────────────────────────────────────────────────────────
+// Each fixer makes the smallest changes it can to turn a failing rule green,
+// swapping individual dishes (respecting season/slot/course) and avoiding
+// duplicates. The UI re-runs checkNutrition after a fix so the alerts refresh.
+
+const SLOTS: Slot[] = ['dinar', 'sopar']
+interface Loc { day: number; slot: Slot; course: Course }
+const field = (c: Course) => (c === 'primer' ? 'primerId' : 'segonId')
+
+function eatenLocs(menu: WeeklyMenu): Loc[] {
+  const out: Loc[] = []
+  menu.days.forEach((d, i) => {
+    for (const slot of SLOTS) {
+      if (d[slot].attendees.length === 0) continue
+      out.push({ day: i, slot, course: 'primer' }, { day: i, slot, course: 'segon' })
+    }
+  })
+  return out
+}
+
+const idAt = (menu: WeeklyMenu, l: Loc) => menu.days[l.day][l.slot][field(l.course)]
+const dishAt = (menu: WeeklyMenu, l: Loc) => { const id = idAt(menu, l); return id ? dishById(id) : undefined }
+
+function withId(menu: WeeklyMenu, l: Loc, id: string): WeeklyMenu {
+  const days = menu.days.map((d, i) =>
+    i === l.day ? { ...d, [l.slot]: { ...d[l.slot], [field(l.course)]: id } } : d,
+  )
+  return { ...menu, days }
+}
+
+const chosenIds = (menu: WeeklyMenu) =>
+  eatenLocs(menu).map((l) => idAt(menu, l)).filter(Boolean) as string[]
+
+/** Pick a replacement for a location matching `pred`, preferring non-duplicates. */
+function pickReplacement(menu: WeeklyMenu, l: Loc, pred: (d: Dish) => boolean): string | null {
+  const used = new Set(chosenIds(menu))
+  const current = idAt(menu, l)
+  const pool = poolFor(menu.season, l.slot, l.course).filter((d) => d.id !== current && pred(d))
+  const fresh = pool.filter((d) => !used.has(d.id))
+  const cands = fresh.length ? fresh : pool
+  if (!cands.length) return null
+  return cands[Math.floor(Math.random() * cands.length)].id
+}
+
+const ruleStatus = (menu: WeeklyMenu, id: string) =>
+  checkNutrition(menu).find((r) => r.id === id)?.status
+
+/** Resolve a specific nutritional alert by swapping dishes. Returns a new menu. */
+export function fixRule(menu: WeeklyMenu, ruleId: string): WeeklyMenu {
+  switch (ruleId) {
+    case 'unique': return fixUnique(menu)
+    case 'protein-balance': return fixProtein(menu)
+    case 'fish': return fixFish(menu)
+    case 'carbs': return fixCarbs(menu)
+    case 'veggies': return fixVeggies(menu)
+    default: return menu
+  }
+}
+
+function fixUnique(menu: WeeklyMenu): WeeklyMenu {
+  const seen = new Set<string>()
+  let m = menu
+  for (const l of eatenLocs(m)) {
+    const id = idAt(m, l)
+    if (!id) continue
+    if (seen.has(id)) {
+      const repl = pickReplacement(m, l, () => true)
+      seen.add(repl ?? id)
+      if (repl) m = withId(m, l, repl)
+    } else {
+      seen.add(id)
+    }
+  }
+  return m
+}
+
+function fixFish(menu: WeeklyMenu): WeeklyMenu {
+  let m = menu
+  for (let i = 0; i < 12 && ruleStatus(m, 'fish') === 'warn'; i++) {
+    const target = eatenLocs(m).find((l) => {
+      const d = dishAt(m, l)
+      return l.course === 'segon' && d && !d.tags.includes('peix')
+    })
+    if (!target) break
+    const repl = pickReplacement(m, target, (d) => d.tags.includes('peix'))
+    if (!repl) break
+    m = withId(m, target, repl)
+  }
+  return m
+}
+
+function fixProtein(menu: WeeklyMenu): WeeklyMenu {
+  let m = menu
+  const tags: Tag[] = ['peix', 'carn', 'ou']
+  for (let i = 0; i < 14 && ruleStatus(m, 'protein-balance') === 'warn'; i++) {
+    const mains = eatenLocs(m)
+      .filter((l) => l.course === 'segon')
+      .map((l) => ({ l, d: dishAt(m, l) }))
+      .filter((x) => x.d) as { l: Loc; d: Dish }[]
+    const total = mains.length
+    const dom = tags
+      .map((t) => ({ t, n: mains.filter((x) => x.d.tags.includes(t)).length }))
+      .find((c) => total >= 3 && c.n / total > 0.5)
+    if (!dom) break
+    const target = mains.find((x) => x.d.tags.includes(dom.t))
+    if (!target) break
+    const repl = pickReplacement(m, target.l, (d) => !d.tags.includes(dom.t))
+    if (!repl) break
+    m = withId(m, target.l, repl)
+  }
+  return m
+}
+
+function fixVeggies(menu: WeeklyMenu): WeeklyMenu {
+  let m = menu
+  for (let i = 0; i < 16 && ruleStatus(m, 'veggies') === 'warn'; i++) {
+    // Find an eaten meal whose dishes lack vegetables.
+    const dayLoc = eatenLocs(m).find((l) => {
+      const day = m.days[l.day]
+      const dishes = [day[l.slot].primerId, day[l.slot].segonId]
+        .map((id) => (id ? dishById(id) : undefined)).filter(Boolean) as Dish[]
+      return !dishes.some(hasVeg)
+    })
+    if (!dayLoc) break
+    const loc: Loc = { day: dayLoc.day, slot: dayLoc.slot, course: 'primer' }
+    const repl = pickReplacement(m, loc, hasVeg)
+    if (!repl) break
+    m = withId(m, loc, repl)
+  }
+  return m
+}
+
+function fixCarbs(menu: WeeklyMenu): WeeklyMenu {
+  let m = menu
+  for (let i = 0; i < 16 && ruleStatus(m, 'carbs') === 'warn'; i++) {
+    const { meals } = collect(m)
+    const carbMeals = meals.filter((mm) => mm.dishes.some(hasCarb)).length
+    const tooFew = carbMeals / meals.length < 0.15
+    // Pick a meal to adjust and a course to swap.
+    const mealLoc = eatenLocs(m).find((l) => {
+      const day = m.days[l.day]
+      const dishes = [day[l.slot].primerId, day[l.slot].segonId]
+        .map((id) => (id ? dishById(id) : undefined)).filter(Boolean) as Dish[]
+      const mealHasCarb = dishes.some(hasCarb)
+      return tooFew ? !mealHasCarb : mealHasCarb
+    })
+    if (!mealLoc) break
+    let changed = false
+    for (const course of ['primer', 'segon'] as Course[]) {
+      const loc: Loc = { day: mealLoc.day, slot: mealLoc.slot, course }
+      if (!tooFew) {
+        const d = dishAt(m, loc)
+        if (!d || !hasCarb(d)) continue
+      }
+      const repl = pickReplacement(m, loc, (d) => (tooFew ? hasCarb(d) : !hasCarb(d)))
+      if (repl) { m = withId(m, loc, repl); changed = true; break }
+    }
+    if (!changed) break
+  }
+  return m
 }
