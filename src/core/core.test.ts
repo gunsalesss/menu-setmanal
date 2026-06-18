@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { seasonForDate } from './season'
 import { generateMenu } from './generate'
 import { buildGroceryList, groceryKey } from './grocery'
-import { groceryToText } from './export'
+import { groceryToText, menuToText } from './export'
 import type { AttendanceDay } from './types'
 
 describe('seasonForDate', () => {
@@ -91,6 +91,32 @@ describe('default fixed meals', () => {
     const menu = generateMenu(att, 7)
     expect(menu.days[0].sopar.primerId).toBe('caldo-verdures')
     expect(menu.days[0].sopar.segonId).toBe('pinya-natural')
+  })
+})
+
+describe('menuToText', () => {
+  it('formats the day header with the full month name', () => {
+    const att: AttendanceDay[] = [
+      { date: '2026-06-16', dinar: ['adria', 'helena'], sopar: [] },
+    ]
+    expect(menuToText(generateMenu(att, 3))).toContain('*Dimarts 16 Juny*')
+  })
+
+  it('shows italic "Fora" when both eat out, no dishes listed', () => {
+    const att: AttendanceDay[] = [
+      { date: '2026-06-16', dinar: ['adria', 'helena'], sopar: [] }, // sopar = both out
+    ]
+    const text = menuToText(generateMenu(att, 3))
+    expect(text).toContain('Sopar _Fora_')
+    expect(text).toContain('Dinar:') // both home → plain label + dishes
+  })
+
+  it('annotates the absent person when only one eats out', () => {
+    const att: AttendanceDay[] = [
+      { date: '2026-06-16', dinar: ['helena'], sopar: ['adria', 'helena'] },
+    ]
+    const text = menuToText(generateMenu(att, 3))
+    expect(text).toContain('Dinar _Adrià fora_')
   })
 })
 

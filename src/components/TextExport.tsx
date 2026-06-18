@@ -2,27 +2,35 @@ import { useState } from 'react'
 import { useStore } from '../store'
 import { menuToText, groceryToText } from '../core/export'
 
+/** A read-only text box with its own copy-to-clipboard button. */
+function CopyBox({ title, text, rows }: { title: string; text: string; rows: number }) {
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    await navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <div className="copybox">
+      <div className="row">
+        <strong>{title}</strong>
+        <button onClick={copy}>{copied ? 'Copiat! ✅' : 'Copiar'}</button>
+      </div>
+      <textarea readOnly value={text} rows={rows} />
+    </div>
+  )
+}
+
 export function TextExport() {
   const menu = useStore((s) => s.menu)
   const checked = useStore((s) => s.checkedGrocery)
-  const [copied, setCopied] = useState('')
   if (!menu) return null
-
-  // Items checked off in the grocery view are excluded from the export.
-  const text = `${menuToText(menu)}\n\n${groceryToText(menu, checked)}`
-
-  const copy = async () => {
-    await navigator.clipboard.writeText(text)
-    setCopied('Copiat! ✅')
-    setTimeout(() => setCopied(''), 2000)
-  }
 
   return (
     <div className="export">
-      <div className="row">
-        <button onClick={copy}>Copiar tot {copied}</button>
-      </div>
-      <textarea readOnly value={text} rows={18} />
+      <CopyBox title="Menú" text={menuToText(menu)} rows={12} />
+      {/* Items checked off in the grocery view are excluded from this list. */}
+      <CopyBox title="Llista de la compra" text={groceryToText(menu, checked)} rows={12} />
     </div>
   )
 }
