@@ -76,6 +76,10 @@ table.menu td { text-align: left; vertical-align: top; }
 .nutrition .rule-text { display: flex; flex-direction: column; }
 .nutrition .rule-detail { color: var(--muted); font-size: .82rem; }
 .nutrition li.warn .rule-detail { color: #b06a00; }
+.nutrition .rule-text { flex: 1; }
+.rule-fix { flex: 0 0 auto; align-self: center; background: var(--accent); color: #fff; border-color: var(--accent); font-size: .8rem; padding: .35rem .7rem; }
+/* Keep white text legible on hover for accent-coloured buttons. */
+.rule-fix:hover, button.primary:hover { background: #336441; border-color: #336441; color: #fff; }
 .export { display: flex; flex-direction: column; gap: 1rem; }
 .copybox .row { justify-content: space-between; margin: 0 0 .4rem; }
 .copybox textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; resize: vertical; }

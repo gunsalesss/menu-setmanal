@@ -3,7 +3,7 @@ import { seasonForDate } from './season'
 import { generateMenu } from './generate'
 import { buildGroceryList, groceryKey } from './grocery'
 import { groceryToText, menuToText } from './export'
-import { checkNutrition } from './nutrition'
+import { checkNutrition, fixRule } from './nutrition'
 import type { AttendanceDay, WeeklyMenu } from './types'
 
 describe('seasonForDate', () => {
@@ -168,6 +168,40 @@ describe('checkNutrition', () => {
     expect(res.map((r) => r.id)).toEqual(
       expect.arrayContaining(['unique', 'protein-balance', 'fish', 'carbs', 'veggies']),
     )
+  })
+})
+
+describe('fixRule', () => {
+  it('resolves a repeated-dish alert', () => {
+    const menu: WeeklyMenu = {
+      season: 'estiu',
+      days: [
+        {
+          date: '2026-07-15',
+          dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'pollastre-planxa-verdures' },
+          sopar: { slot: 'sopar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'salmo-planxa' },
+        },
+      ],
+    }
+    expect(checkNutrition(menu).find((r) => r.id === 'unique')!.status).toBe('warn')
+    const fixed = fixRule(menu, 'unique')
+    expect(checkNutrition(fixed).find((r) => r.id === 'unique')!.status).toBe('ok')
+  })
+
+  it('adds fish when there is too little', () => {
+    const menu: WeeklyMenu = {
+      season: 'estiu',
+      days: [
+        {
+          date: '2026-07-15',
+          dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'pollastre-planxa-verdures' },
+          sopar: { slot: 'sopar', attendees: ['adria'], primerId: 'gaspatxo-alvocat', segonId: 'hamburguesa' },
+        },
+      ],
+    }
+    expect(checkNutrition(menu).find((r) => r.id === 'fish')!.status).toBe('warn')
+    const fixed = fixRule(menu, 'fish')
+    expect(checkNutrition(fixed).find((r) => r.id === 'fish')!.status).toBe('ok')
   })
 })
 
