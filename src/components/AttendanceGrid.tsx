@@ -1,10 +1,7 @@
 import { useStore } from '../store'
-import type { Person, Slot } from '../core/types'
+import type { Slot } from '../core/types'
+import { PEOPLE } from '../core/types'
 
-const PEOPLE: { id: Person; label: string }[] = [
-  { id: 'adria', label: 'Adrià' },
-  { id: 'helena', label: 'Helena' },
-]
 const SLOTS: { id: Slot; label: string }[] = [
   { id: 'dinar', label: 'Dinar' },
   { id: 'sopar', label: 'Sopar' },
@@ -17,7 +14,7 @@ function label(iso: string) {
 }
 
 export function AttendanceGrid() {
-  const { attendance, toggleAttendee } = useStore()
+  const { attendance, toggleAttendee, names } = useStore()
   return (
     <div className="table-scroll">
     <table className="grid">
@@ -28,7 +25,7 @@ export function AttendanceGrid() {
         </tr>
         <tr>
           <th></th>
-          {SLOTS.flatMap((s) => PEOPLE.map((p) => <th key={s.id + p.id} className="sub">{p.label}</th>))}
+          {SLOTS.flatMap((s) => PEOPLE.map((p) => <th key={s.id + p} className="sub">{names[p]}</th>))}
         </tr>
       </thead>
       <tbody>
@@ -37,13 +34,13 @@ export function AttendanceGrid() {
             <td>{label(day.date)}</td>
             {SLOTS.flatMap((s) =>
               PEOPLE.map((p) => {
-                const home = day[s.id].includes(p.id)
+                const home = day[s.id].includes(p)
                 return (
-                  <td key={day.date + s.id + p.id}>
+                  <td key={day.date + s.id + p}>
                     <button
                       className={`chip ${home ? 'home' : 'out'}`}
-                      title={home ? 'Menja a casa' : 'Menja fora'}
-                      onClick={() => toggleAttendee(day.date, s.id, p.id)}
+                      title={home ? `${names[p]} menja a casa` : `${names[p]} menja fora`}
+                      onClick={() => toggleAttendee(day.date, s.id, p)}
                     >
                       {home ? '🏠' : '🚶'}
                     </button>

@@ -18,6 +18,11 @@ export type Tag =
 
 export type Person = 'adria' | 'helena'
 
+export const PEOPLE: Person[] = ['adria', 'helena']
+
+/** Default display names; the user can override these in the UI. */
+export const DEFAULT_NAMES: Record<Person, string> = { adria: 'Adrià', helena: 'Helena' }
+
 export interface Ingredient {
   item: string
   /** Quantity for `servingsBase` servings. Omit for "to taste" items. */
