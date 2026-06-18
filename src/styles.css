@@ -14,7 +14,11 @@ button { padding: .5rem .9rem; border: 1px solid var(--line); border-radius: 8px
 button:hover { background: #f0f0f0; }
 button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; padding: .7rem 1.4rem; }
 .badge { background: var(--accent); color: #fff; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; }
+/* Horizontal scroll fallback so wide tables stay usable on narrow screens. */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table.grid { border-collapse: collapse; width: 100%; }
+/* Keep tables legible; below this width the .table-scroll wrapper scrolls. */
+table.grid.menu { min-width: 460px; }
 table.grid th, table.grid td { border: 1px solid var(--line); padding: .4rem .5rem; text-align: center; font-size: .9rem; }
 table.grid th.sub { font-weight: 400; color: var(--muted); font-size: .75rem; }
 .chip { border: none; background: transparent; font-size: 1.1rem; padding: .2rem; }
@@ -35,4 +39,20 @@ table.menu td { text-align: left; vertical-align: top; }
 .grocery li label { flex-direction: row; align-items: center; gap: .4rem; color: var(--ink); cursor: pointer; }
 .grocery li label.checked { color: var(--muted); text-decoration: line-through; }
 .qty { color: var(--muted); }
-.export textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; }
+.export { display: flex; flex-direction: column; gap: 1rem; }
+.copybox .row { justify-content: space-between; margin: 0 0 .4rem; }
+.copybox textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; resize: vertical; }
+
+/* ── Mobile ─────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .app { padding: .75rem .75rem 3rem; }
+  h1 { font-size: 1.15rem; }
+  h2 { font-size: 1rem; }
+  .card { padding: .75rem; border-radius: 10px; }
+  .row { gap: .5rem; }
+  table.grid th, table.grid td { padding: .35rem; font-size: .8rem; }
+  .course-label { flex-basis: 2.4rem; font-size: .6rem; }
+  .reroll { padding: .15rem .3rem; font-size: .85rem; }
+  .grocery-cols { grid-template-columns: 1fr; gap: .6rem; }
+  button.primary { width: 100%; }
+}

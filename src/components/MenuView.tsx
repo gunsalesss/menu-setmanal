@@ -34,17 +34,19 @@ export function MenuView() {
   const menu = useStore((s) => s.menu)
   if (!menu) return null
   return (
-    <table className="grid menu">
-      <thead><tr><th>Dia</th><th>Dinar</th><th>Sopar</th></tr></thead>
-      <tbody>
-        {menu.days.map((d) => (
-          <tr key={d.date}>
-            <td>{label(d.date)}</td>
-            <td><MealCell date={d.date} slot="dinar" meal={d.dinar} /></td>
-            <td><MealCell date={d.date} slot="sopar" meal={d.sopar} /></td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="table-scroll">
+      <table className="grid menu">
+        <thead><tr><th>Dia</th><th>Dinar</th><th>Sopar</th></tr></thead>
+        <tbody>
+          {menu.days.map((d) => (
+            <tr key={d.date}>
+              <td>{label(d.date)}</td>
+              <td><MealCell date={d.date} slot="dinar" meal={d.dinar} /></td>
+              <td><MealCell date={d.date} slot="sopar" meal={d.sopar} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }

@@ -19,6 +19,7 @@ function label(iso: string) {
 export function AttendanceGrid() {
   const { attendance, toggleAttendee } = useStore()
   return (
+    <div className="table-scroll">
     <table className="grid">
       <thead>
         <tr>
@@ -54,5 +55,6 @@ export function AttendanceGrid() {
         ))}
       </tbody>
     </table>
+    </div>
   )
 }
