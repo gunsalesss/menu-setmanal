@@ -1,0 +1,34 @@
+:root {
+  --bg: #f7f6f2; --card: #fff; --ink: #2b2b2b; --muted: #8a8a8a;
+  --accent: #3f7d4e; --line: #e3e1da; --home: #d8efd9; --out: #f0eee8;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); }
+.app { max-width: 880px; margin: 0 auto; padding: 1rem 1rem 4rem; }
+h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin: 0 0 .75rem; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
+.row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin: .5rem 0; }
+label { display: flex; flex-direction: column; font-size: .8rem; color: var(--muted); gap: .25rem; }
+input { padding: .4rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; }
+button { padding: .5rem .9rem; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font-size: .95rem; }
+button:hover { background: #f0f0f0; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; padding: .7rem 1.4rem; }
+.badge { background: var(--accent); color: #fff; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; }
+table.grid { border-collapse: collapse; width: 100%; }
+table.grid th, table.grid td { border: 1px solid var(--line); padding: .4rem .5rem; text-align: center; font-size: .9rem; }
+table.grid th.sub { font-weight: 400; color: var(--muted); font-size: .75rem; }
+.chip { border: none; background: transparent; font-size: 1.1rem; padding: .2rem; }
+.chip.out { opacity: .45; }
+table.menu td { text-align: left; }
+.meal { display: flex; align-items: center; gap: .5rem; }
+.meal > span:first-child { flex: 1; }
+.who { color: var(--muted); font-size: .75rem; }
+.reroll { padding: .2rem .4rem; font-size: .9rem; }
+.muted { color: var(--muted); }
+.grocery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.grocery-cat h3 { font-size: .9rem; margin: 0 0 .4rem; color: var(--accent); }
+.grocery ul { list-style: none; padding: 0; margin: 0; }
+.grocery li { padding: .15rem 0; font-size: .9rem; }
+.grocery li label { flex-direction: row; align-items: center; gap: .4rem; color: var(--ink); }
+.qty { color: var(--muted); }
+.export textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; }

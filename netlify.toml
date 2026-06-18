@@ -1,0 +1,8 @@
+# Netlify deploy config. Drag-and-drop the `dist/` folder at app.netlify.com,
+# or connect this repo and Netlify will use the settings below.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"

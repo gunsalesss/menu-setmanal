@@ -1,0 +1,10 @@
+{
+  "_comment": "Northern-hemisphere month/day ranges → season. Edit freely.",
+  "ranges": [
+    { "season": "hivern", "from": "12-01", "to": "03-15" },
+    { "season": "estiu", "from": "06-15", "to": "08-31" },
+    { "season": "final-estiu", "from": "09-01", "to": "10-15" },
+    { "season": "tardor", "from": "10-16", "to": "11-30" },
+    { "season": "estiu", "from": "03-16", "to": "06-14" }
+  ]
+}
