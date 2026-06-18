@@ -5,9 +5,16 @@
 * { box-sizing: border-box; }
 body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--ink); }
 .app { max-width: 880px; margin: 0 auto; padding: 1rem 1rem 4rem; }
+.app-header { display: flex; align-items: center; justify-content: flex-start; gap: .75rem; flex-wrap: wrap; }
+.names-btn { background: transparent; border: 1px dashed var(--line); color: var(--muted); font-size: .85rem; }
+.names-editor { margin: 0; }
+.names-editor input { max-width: 9rem; }
 h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin: 0 0 .75rem; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1rem; margin: 1rem 0; }
 .row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin: .5rem 0; }
+/* Bottom-align so the inputs, Aplicar button and Temporada badge line up. */
+.dates-row { align-items: flex-end; }
+.dates-row .badge { margin-bottom: .35rem; }
 label { display: flex; flex-direction: column; font-size: .8rem; color: var(--muted); gap: .25rem; }
 input { padding: .4rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; }
 button { padding: .5rem .9rem; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font-size: .95rem; }
@@ -28,7 +35,8 @@ table.menu td { text-align: left; vertical-align: top; }
 .course { display: flex; align-items: center; gap: .4rem; }
 .course-label { flex: 0 0 3.2rem; font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--accent); font-weight: 600; }
 .course-name { flex: 1; }
-.who { align-self: flex-end; color: var(--muted); font-size: .75rem; }
+/* Right padding matches the reroll button so the initials sit under the dice. */
+.who { align-self: flex-end; color: var(--muted); font-size: .75rem; padding-right: .4rem; }
 .reroll { padding: .2rem .4rem; font-size: .9rem; }
 .muted { color: var(--muted); }
 .grocery .hint { margin: 0 0 .75rem; font-size: .8rem; color: var(--muted); }

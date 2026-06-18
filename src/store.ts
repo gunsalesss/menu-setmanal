@@ -1,6 +1,22 @@
 import { create } from 'zustand'
 import type { AttendanceDay, Course, Person, Slot, WeeklyMenu } from './core/types'
+import { DEFAULT_NAMES } from './core/types'
 import { generateMenu, rerollMeal } from './core/generate'
+
+const NAMES_KEY = 'menu-names'
+
+function loadNames(): Record<Person, string> {
+  try {
+    const raw = localStorage.getItem(NAMES_KEY)
+    if (raw) {
+      const o = JSON.parse(raw)
+      return { adria: o.adria || DEFAULT_NAMES.adria, helena: o.helena || DEFAULT_NAMES.helena }
+    }
+  } catch {
+    /* ignore unavailable/corrupt storage */
+  }
+  return { ...DEFAULT_NAMES }
+}
 
 interface State {
   attendance: AttendanceDay[]
@@ -8,11 +24,14 @@ interface State {
   rerollSeed: number
   /** Keys of grocery items the user already has (excluded from the export). */
   checkedGrocery: Set<string>
+  /** Editable display names for the two people; persisted to localStorage. */
+  names: Record<Person, string>
   setRange: (startISO: string, days: number) => void
   toggleAttendee: (date: string, slot: Slot, person: Person) => void
   generate: () => void
   reroll: (date: string, slot: Slot, course: Course) => void
   toggleGrocery: (key: string) => void
+  setName: (person: Person, name: string) => void
 }
 
 function buildRange(startISO: string, days: number): AttendanceDay[] {
@@ -34,6 +53,7 @@ export const useStore = create<State>((set, get) => ({
   menu: null,
   rerollSeed: 1,
   checkedGrocery: new Set(),
+  names: loadNames(),
 
   setRange: (startISO, days) => set({ attendance: buildRange(startISO, days), menu: null }),
 
@@ -64,5 +84,16 @@ export const useStore = create<State>((set, get) => ({
       const next = new Set(s.checkedGrocery)
       next.has(key) ? next.delete(key) : next.add(key)
       return { checkedGrocery: next }
+    }),
+
+  setName: (person, name) =>
+    set((s) => {
+      const names = { ...s.names, [person]: name }
+      try {
+        localStorage.setItem(NAMES_KEY, JSON.stringify(names))
+      } catch {
+        /* ignore unavailable storage */
+      }
+      return { names }
     }),
 }))

@@ -5,6 +5,7 @@ import { AttendanceGrid } from './components/AttendanceGrid'
 import { MenuView } from './components/MenuView'
 import { GroceryView } from './components/GroceryView'
 import { TextExport } from './components/TextExport'
+import { NamesEditor } from './components/NamesEditor'
 
 export function App() {
   const { attendance, menu, setRange, generate } = useStore()
@@ -13,13 +14,14 @@ export function App() {
 
   return (
     <div className="app">
-      <header>
-        <h1>🍽️ Menú setmanal · Adrià &amp; Helena</h1>
+      <header className="app-header">
+        <h1>🍽️ Menú setmanal</h1>
+        <NamesEditor />
       </header>
 
       <section className="card">
         <h2>1. Dates</h2>
-        <div className="row">
+        <div className="row dates-row">
           <label>
             Inici
             <input type="date" value={start} onChange={(e) => setStart(e.target.value)} />

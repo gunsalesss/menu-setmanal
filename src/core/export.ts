@@ -1,4 +1,5 @@
 import type { Person, PlannedMeal, WeeklyMenu } from './types'
+import { DEFAULT_NAMES } from './types'
 import { dishById } from './dishes'
 import { buildGroceryList, CATEGORY_LABELS, groceryKey, type GroceryItem } from './grocery'
 import type { GroceryCategory } from './types'
@@ -6,7 +7,6 @@ import type { GroceryCategory } from './types'
 const DAY_NAMES = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte']
 const MONTHS = ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny',
   'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre']
-const PERSON_NAMES: Record<Person, string> = { adria: 'Adrià', helena: 'Helena' }
 
 /** Bold day header, e.g. "*Dilluns 15 Juny*". */
 function dayHeader(iso: string): string {
@@ -27,20 +27,20 @@ function dishName(id: string | null): string {
  *   - Pollastre planxa
  * Both out → "Sopar _Fora_" (no dishes). One out → "Sopar _Adrià fora_" + dishes.
  */
-function mealBlock(label: string, meal: PlannedMeal): string[] {
+function mealBlock(label: string, meal: PlannedMeal, names: Record<Person, string>): string[] {
   if (meal.attendees.length === 0) return [`${label} _Fora_`]
   const absent = (['adria', 'helena'] as Person[]).filter((p) => !meal.attendees.includes(p))
-  const header = absent.length === 1 ? `${label} _${PERSON_NAMES[absent[0]]} fora_` : `${label}:`
+  const header = absent.length === 1 ? `${label} _${names[absent[0]]} fora_` : `${label}:`
   return [header, `- ${dishName(meal.primerId)}`, `- ${dishName(meal.segonId)}`]
 }
 
 /** WhatsApp-friendly plain-text menu. */
-export function menuToText(menu: WeeklyMenu): string {
+export function menuToText(menu: WeeklyMenu, names: Record<Person, string> = DEFAULT_NAMES): string {
   const lines: string[] = []
   for (const day of menu.days) {
     lines.push(dayHeader(day.date))
-    lines.push(...mealBlock('Dinar', day.dinar))
-    lines.push(...mealBlock('Sopar', day.sopar))
+    lines.push(...mealBlock('Dinar', day.dinar, names))
+    lines.push(...mealBlock('Sopar', day.sopar, names))
     lines.push('')
   }
   return lines.join('\n').trim()

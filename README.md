@@ -1,7 +1,9 @@
-# Menú setmanal · Adrià & Helena
+# Menú setmanal
 
 Generador de menús setmanals segons la temporada de l'any, adaptat a dues persones,
 amb llista de la compra i exportació per WhatsApp.
+
+🌐 **En línia:** https://gunsaless.github.io/menu-setmanal/
 
 ## Engegar
 
@@ -16,11 +18,27 @@ npm run build    # build estàtic a /dist (desplegable a qualsevol host)
 
 1. **Dates** — tries inici + nombre de dies. La temporada es calcula automàticament.
 2. **Qui menja a casa** — per cada dia i àpat (dinar/sopar), marca 🏠 (casa) o 🚶 (fora) per a cadascú.
-3. **Generar** — omple dinar i sopar des de la base de dades de la temporada, evitant repeticions i variant proteïnes.
-4. **Llista de la compra** — agrega i escala els ingredients pels comensals.
-5. **Exportar** — text pla per enganxar a WhatsApp.
+   Per defecte els caps de setmana es marquen com a fora.
+3. **Generar** — omple cada àpat amb un **primer** i un **segon** des de la base de dades de
+   la temporada, evitant repeticions i variant proteïnes. Cada generació és aleatòria.
+4. **Llista de la compra** — agrega i escala els ingredients pels comensals. Marca el que ja
+   tens i desapareixerà de l'exportació.
+5. **Exportar** — dos quadres de text independents (menú i llista) per enganxar a WhatsApp.
+
+Funcions addicionals:
+
+- **🎲 Rebarrejar** cada plat (primer o segon) individualment.
+- **Editar els noms** de les dues persones (botó del capçal); s'apliquen a tota l'app i es guarden.
 
 Esmorzar, mig matí i berenar es deixen com a rutines fixes (no es generen).
+
+### Regles per defecte (es poden canviar rebarrejant)
+
+- Caps de setmana → tots els àpats fora.
+- Dilluns sopar amb tots dos a casa → *mongeta i pastanaga al vapor* + *salmó a la planxa*.
+- Diumenge sopar amb almenys 1 a casa → *pinya* + *caldo* (tardor/hivern) o *gaspatxo* (primavera/estiu).
+
+L'exportació marca `_Fora_` quan tots dos mengen fora i `_<Nom> fora_` quan només en falta un.
 
 ## La base de dades (el que editaràs tu)
 
@@ -53,13 +71,14 @@ La lògica de `core/` no depèn de React: és testejable i es podria moure a un 
 
 ## Desplegar
 
-L'app és estàtica (`npm run build` → `dist/`), així que es pot penjar a qualsevol host.
+L'app ja està publicada a **GitHub Pages**: https://gunsaless.github.io/menu-setmanal/
 
-**Netlify** (més fàcil): arrossega la carpeta `dist/` a [app.netlify.com/drop](https://app.netlify.com/drop),
-o connecta el repo i farà servir `netlify.toml` automàticament.
+El workflow `.github/workflows/deploy.yml` reconstrueix i publica automàticament a cada
+`push` a `main` (Pages amb *Source: GitHub Actions*).
 
-**GitHub Pages**: puja el repo a GitHub, ves a *Settings → Pages → Source: GitHub Actions*.
-El workflow `.github/workflows/deploy.yml` construeix i publica a cada `push` a `main`.
+Com que és una app estàtica (`npm run build` → `dist/`), també es pot penjar a qualsevol
+altre host — p. ex. arrossegant `dist/` a [app.netlify.com/drop](https://app.netlify.com/drop)
+(hi ha un `netlify.toml` preparat).
 
 ## Pendents / idees
 
