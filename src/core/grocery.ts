@@ -29,7 +29,8 @@ export function buildGroceryList(menu: WeeklyMenu): Record<GroceryCategory, Groc
 
   for (const day of menu.days) {
     for (const meal of [day.dinar, day.sopar]) {
-      for (const dishId of [meal.primerId, meal.segonId]) {
+      const courseIds = meal.single ? [meal.segonId] : [meal.primerId, meal.segonId]
+      for (const dishId of courseIds) {
         if (!dishId) continue
         const dish = dishById(dishId)
         if (!dish || dish.free) continue

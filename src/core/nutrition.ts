@@ -21,7 +21,7 @@ function collect(menu: WeeklyMenu): { meals: Meal[]; all: Dish[]; mains: Dish[] 
   for (const day of menu.days) {
     for (const m of [day.dinar, day.sopar]) {
       if (m.attendees.length === 0) continue
-      const primer = m.primerId ? dishById(m.primerId) : undefined
+      const primer = m.single || !m.primerId ? undefined : dishById(m.primerId)
       const main = m.segonId ? dishById(m.segonId) : undefined
       meals.push({ dishes: [primer, main].filter(Boolean) as Dish[], main })
     }
@@ -34,7 +34,11 @@ function collect(menu: WeeklyMenu): { meals: Meal[]; all: Dish[]; mains: Dish[] 
 const VEG_TAGS: Tag[] = ['verdura', 'amanida', 'crema']
 const hasTag = (d: Dish, t: Tag) => d.tags.includes(t)
 const hasVeg = (d: Dish) => d.tags.some((t) => VEG_TAGS.includes(t))
-const hasCarb = (d: Dish) => d.ingredients.some((i) => i.category === 'llegums-cereals')
+// Whole grains / pulses only — refined breads (e.g. pa de briox) don't count.
+const WHOLE_CARB = ['integral', 'llenti', 'cigró', 'cigro', 'fesol', 'mongeta', 'pèsol', 'pesol', 'fava', 'quinoa', 'civada', 'avena']
+const hasCarb = (d: Dish) =>
+  d.ingredients.some((i) => i.category === 'llegums-cereals' &&
+    WHOLE_CARB.some((w) => i.item.toLowerCase().includes(w)))
 const pct = (n: number, d: number) => (d ? Math.round((n / d) * 100) : 0)
 
 const hay = (d: Dish) => (d.name + ' ' + d.ingredients.map((i) => i.item).join(' ')).toLowerCase()

@@ -11,8 +11,11 @@ function label(iso: string) {
 }
 
 function CourseRow(
-  { date, slot, course, dishId }:
-  { date: string; slot: Slot; course: Course; dishId: string | null },
+  { date, slot, course, dishId, single, onToggleSingle }:
+  {
+    date: string; slot: Slot; course: Course; dishId: string | null
+    single?: boolean; onToggleSingle?: () => void
+  },
 ) {
   const reroll = useStore((s) => s.reroll)
   const setDish = useStore((s) => s.setDish)
@@ -26,6 +29,15 @@ function CourseRow(
       <span className="course-actions">
         <button className="reroll" title={`Canviar ${course} a l'atzar`} onClick={() => reroll(date, slot, course)}>🎲</button>
         <button className="reroll" title={`Triar ${course}`} onClick={() => setPicking(true)}>✏️</button>
+        {onToggleSingle && (
+          <button
+            className={`reroll ${single ? 'active' : ''}`}
+            title={single ? 'Tornar a dos plats' : 'Fer plat únic'}
+            onClick={onToggleSingle}
+          >
+            {single ? '②' : '①'}
+          </button>
+        )}
       </span>
       {picking && (
         <DishPicker
@@ -41,12 +53,18 @@ function CourseRow(
 
 function MealCell({ date, slot, meal }: { date: string; slot: Slot; meal: PlannedMeal }) {
   const people = useStore((s) => s.people)
+  const toggleSingle = useStore((s) => s.toggleSingle)
   if (meal.attendees.length === 0) return <span className="muted">— fora —</span>
   const nameOf = (id: string) => people.find((p) => p.id === id)?.name ?? id
   return (
     <div className="meal">
-      <CourseRow date={date} slot={slot} course="primer" dishId={meal.primerId} />
-      <CourseRow date={date} slot={slot} course="segon" dishId={meal.segonId} />
+      {!meal.single && (
+        <CourseRow date={date} slot={slot} course="primer" dishId={meal.primerId} />
+      )}
+      <CourseRow
+        date={date} slot={slot} course="segon" dishId={meal.segonId}
+        single={meal.single} onToggleSingle={() => toggleSingle(date, slot)}
+      />
       <div className="meal-foot">
         <span className="who" title={meal.attendees.map(nameOf).join(' + ')}>
           {meal.attendees.map((p) => nameOf(p)[0]?.toUpperCase()).join('+')}
