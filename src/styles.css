@@ -99,6 +99,8 @@ table.menu td { text-align: left; vertical-align: top; }
 .export { display: flex; flex-direction: column; gap: 1rem; }
 .copybox .row { margin: 0 0 .4rem; }
 .copybox .row strong { margin-right: auto; }
+.wa-btn { background: #25d366; color: #fff; border-color: #25d366; font-weight: 600; display: inline-flex; align-items: center; gap: .35rem; }
+.wa-btn:hover { background: #1da851; border-color: #1da851; color: #fff; }
 .copybox textarea { width: 100%; font-family: ui-monospace, monospace; font-size: .85rem; border: 1px solid var(--line); border-radius: 8px; padding: .75rem; resize: vertical; background: var(--card); color: var(--ink); }
 
 /* ── Mobile ─────────────────────────────────────────────────────────────── */
