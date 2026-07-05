@@ -118,4 +118,6 @@ table.menu td { text-align: left; vertical-align: top; }
   .grocery li { padding: .5rem 0; font-size: 1.05rem; }
   .grocery li input[type="checkbox"] { width: 1.35rem; height: 1.35rem; }
   button.primary { width: 100%; }
+  /* Title on its own line so the action buttons group tidily below it. */
+  .copybox .row strong { flex-basis: 100%; margin: 0 0 .1rem; }
 }
