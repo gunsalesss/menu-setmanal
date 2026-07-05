@@ -83,6 +83,8 @@ interface State {
   setDish: (date: string, slot: Slot, course: Course, dishId: string) => void
   /** Resolve a nutritional alert by swapping dishes in the current menu. */
   fixNutrition: (ruleId: string) => void
+  /** Toggle a meal between single-dish (main only) and two courses. */
+  toggleSingle: (date: string, slot: Slot) => void
 }
 
 function buildRange(startISO: string, days: number, ids: Person[]): AttendanceDay[] {
@@ -203,4 +205,13 @@ export const useStore = create<State>((set) => ({
 
   fixNutrition: (ruleId) =>
     set((s) => (s.menu ? { menu: fixRule(s.menu, ruleId) } : {})),
+
+  toggleSingle: (date, slot) =>
+    set((s) => {
+      if (!s.menu) return {}
+      const days = s.menu.days.map((d) =>
+        d.date === date ? { ...d, [slot]: { ...d[slot], single: !d[slot].single } } : d,
+      )
+      return { menu: { ...s.menu, days } }
+    }),
 }))

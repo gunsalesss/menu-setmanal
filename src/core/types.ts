@@ -75,6 +75,8 @@ export interface PlannedMeal {
   /** Dish chosen for each course. null = nobody eats at home (meal skipped). */
   primerId: string | null
   segonId: string | null
+  /** Single-dish meal: the starter is hidden and excluded from lists/analysis. */
+  single?: boolean
 }
 
 export interface PlannedDay {

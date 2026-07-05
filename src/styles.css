@@ -50,9 +50,10 @@ table.menu td { text-align: left; vertical-align: top; }
 .course-label { flex: 0 0 3.2rem; font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--accent); font-weight: 600; }
 .course-name { flex: 1; }
 /* Fixed-width action column so the initials below can line up under it. */
-.course-actions { flex: 0 0 4.4rem; display: flex; gap: .25rem; justify-content: center; }
+.course-actions { flex: 0 0 6.6rem; display: flex; gap: .25rem; justify-content: flex-end; }
+.reroll.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .meal-foot { display: flex; }
-.who { flex: 0 0 4.4rem; margin-left: auto; text-align: center; color: var(--muted); font-size: .75rem; }
+.who { flex: 0 0 6.6rem; margin-left: auto; text-align: center; color: var(--muted); font-size: .75rem; }
 .reroll { padding: .2rem .4rem; font-size: .9rem; }
 .muted { color: var(--muted); }
 

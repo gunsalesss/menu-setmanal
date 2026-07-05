@@ -49,6 +49,29 @@ describe('generateMenu', () => {
   })
 })
 
+describe('single-dish meal', () => {
+  it('excludes the starter from grocery list and nutrition when single', () => {
+    const base: WeeklyMenu = {
+      season: 'estiu',
+      days: [{
+        date: '2026-07-15',
+        dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'salmo-planxa' },
+        sopar: { slot: 'sopar', attendees: [], primerId: null, segonId: null },
+      }],
+    }
+    const twoCourse = Object.values(buildGroceryList(base)).flat().map((i) => i.item)
+    expect(twoCourse).toContain('fulla verda') // from the starter
+
+    const single: WeeklyMenu = {
+      ...base,
+      days: [{ ...base.days[0], dinar: { ...base.days[0].dinar, single: true } }],
+    }
+    const oneCourse = Object.values(buildGroceryList(single)).flat().map((i) => i.item)
+    expect(oneCourse).not.toContain('fulla verda') // starter excluded
+    expect(oneCourse).toContain('salmó') // main still there
+  })
+})
+
 describe('same-day protein variety', () => {
   const PROT = ['peix', 'carn', 'ou', 'llegum']
   const protOf = (id: string | null): string[] => {
