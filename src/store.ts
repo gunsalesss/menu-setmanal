@@ -43,6 +43,21 @@ function newId(): string {
   return 'p-' + Math.random().toString(36).slice(2, 9)
 }
 
+const EXTRA_KEY = 'menu-extra-grocery'
+
+function loadExtras(): string[] {
+  try {
+    const raw = localStorage.getItem(EXTRA_KEY)
+    if (raw) {
+      const arr = JSON.parse(raw)
+      if (Array.isArray(arr)) return arr.filter((x) => typeof x === 'string')
+    }
+  } catch {
+    /* ignore */
+  }
+  return []
+}
+
 const THEME_KEY = 'menu-theme'
 
 function loadTheme(): 'light' | 'dark' {
@@ -85,6 +100,10 @@ interface State {
   fixNutrition: (ruleId: string) => void
   /** Toggle a meal between single-dish (main only) and two courses. */
   toggleSingle: (date: string, slot: Slot) => void
+  /** Extra items the user adds to the grocery list by hand; persisted. */
+  extraItems: string[]
+  addExtraItem: (name: string) => void
+  removeExtraItem: (name: string) => void
 }
 
 function buildRange(startISO: string, days: number, ids: Person[]): AttendanceDay[] {
@@ -110,6 +129,7 @@ export const useStore = create<State>((set) => ({
   checkedGrocery: new Set(),
   people: initialPeople,
   theme: loadTheme(),
+  extraItems: loadExtras(),
 
   toggleTheme: () =>
     set((s) => {
@@ -216,5 +236,21 @@ export const useStore = create<State>((set) => ({
         d.date === date ? { ...d, [slot]: { ...d[slot], single: !d[slot].single } } : d,
       )
       return { menu: { ...s.menu, days } }
+    }),
+
+  addExtraItem: (name) =>
+    set((s) => {
+      const n = name.trim()
+      if (!n || s.extraItems.some((x) => x.toLowerCase() === n.toLowerCase())) return {}
+      const extraItems = [...s.extraItems, n]
+      try { localStorage.setItem(EXTRA_KEY, JSON.stringify(extraItems)) } catch { /* ignore */ }
+      return { extraItems }
+    }),
+
+  removeExtraItem: (name) =>
+    set((s) => {
+      const extraItems = s.extraItems.filter((x) => x !== name)
+      try { localStorage.setItem(EXTRA_KEY, JSON.stringify(extraItems)) } catch { /* ignore */ }
+      return { extraItems }
     }),
 }))

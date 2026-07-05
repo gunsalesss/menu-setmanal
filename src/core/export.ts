@@ -57,8 +57,8 @@ export function menuToText(menu: WeeklyMenu, people: PersonInfo[] = DEFAULT_PEOP
  * `grouped` is true (default) items are split by category; otherwise a single
  * flat alphabetical list is returned.
  */
-export function groceryToText(menu: WeeklyMenu, checked?: Set<string>, grouped = true): string {
-  const groups = buildGroceryList(menu)
+export function groceryToText(menu: WeeklyMenu, checked?: Set<string>, grouped = true, extras: string[] = []): string {
+  const groups = buildGroceryList(menu, extras)
   const lines = ['🛒 *LLISTA DE LA COMPRA*', '']
 
   if (!grouped) {

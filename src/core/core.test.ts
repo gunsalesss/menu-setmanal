@@ -79,6 +79,21 @@ describe('syncMenu', () => {
   })
 })
 
+describe('grocery staples and extras', () => {
+  const menu = () => generateMenu(week(), 5)
+
+  it('always includes the water staple', () => {
+    const items = Object.values(buildGroceryList(menu())).flat().map((i) => i.item)
+    expect(items).toContain('aigua')
+  })
+
+  it('includes user-added extra items', () => {
+    const items = Object.values(buildGroceryList(menu(), ['paper de cuina'])).flat().map((i) => i.item)
+    expect(items).toContain('paper de cuina')
+    expect(items).toContain('aigua')
+  })
+})
+
 describe('single-dish meal', () => {
   it('excludes the starter from grocery list and nutrition when single', () => {
     const base: WeeklyMenu = {
