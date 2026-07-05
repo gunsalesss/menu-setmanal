@@ -23,8 +23,17 @@ export const CATEGORY_LABELS: Record<GroceryCategory, string> = {
   altres: 'Altres',
 }
 
-/** Aggregate ingredients across all planned meals, scaled by attendees. */
-export function buildGroceryList(menu: WeeklyMenu): Record<GroceryCategory, GroceryItem[]> {
+/** Items that always appear on the shopping list, regardless of the menu. */
+export const STAPLES: GroceryItem[] = [{ item: 'aigua', category: 'altres' }]
+
+/**
+ * Aggregate ingredients across all planned meals, scaled by attendees.
+ * `extras` are extra items the user added by hand; STAPLES are always added.
+ */
+export function buildGroceryList(
+  menu: WeeklyMenu,
+  extras: string[] = [],
+): Record<GroceryCategory, GroceryItem[]> {
   const acc = new Map<string, GroceryItem>()
 
   for (const day of menu.days) {
@@ -58,6 +67,17 @@ export function buildGroceryList(menu: WeeklyMenu): Record<GroceryCategory, Groc
         }
       }
     }
+  }
+
+  // Always-on staples + user-added items (no quantity, grouped under "Altres").
+  const manual: GroceryItem[] = [
+    ...STAPLES,
+    ...extras.map((e) => ({ item: e.trim(), category: 'altres' as GroceryCategory })),
+  ]
+  for (const it of manual) {
+    if (!it.item) continue
+    const key = groceryKey(it)
+    if (!acc.has(key)) acc.set(key, { item: it.item, category: it.category })
   }
 
   const grouped = {} as Record<GroceryCategory, GroceryItem[]>

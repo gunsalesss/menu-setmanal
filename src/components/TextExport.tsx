@@ -30,6 +30,7 @@ export function TextExport() {
   const menu = useStore((s) => s.menu)
   const checked = useStore((s) => s.checkedGrocery)
   const people = useStore((s) => s.people)
+  const extraItems = useStore((s) => s.extraItems)
   const [grouped, setGrouped] = useState(true)
   if (!menu) return null
 
@@ -39,7 +40,7 @@ export function TextExport() {
       {/* Items checked off in the grocery view are excluded from this list. */}
       <CopyBox
         title="Llista de la compra"
-        text={groceryToText(menu, checked, grouped)}
+        text={groceryToText(menu, checked, grouped, extraItems)}
         rows={12}
         control={
           <button onClick={() => setGrouped((g) => !g)}>
