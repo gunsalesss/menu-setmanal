@@ -167,6 +167,62 @@ export function generateMenu(
   return { season, days }
 }
 
+/**
+ * Re-sync an existing menu to updated attendance without regenerating it:
+ * meals that lose all attendees are cleared, meals that gain attendees (were
+ * skipped) get freshly filled, and meals that already had dishes keep them
+ * (only their attendee list updates, so grocery quantities re-scale).
+ */
+export function syncMenu(
+  menu: WeeklyMenu,
+  attendance: AttendanceDay[],
+  peopleCount = 2,
+  baseSeed: number = Math.floor(Math.random() * 1e9),
+): WeeklyMenu {
+  const season = menu.season
+  const byDate = new Map(attendance.map((a) => [a.date, a]))
+
+  const reserved = new Set<string>()
+  for (const a of attendance) {
+    const f = fixedMeal(a.date, 'sopar', a.sopar, season, peopleCount)
+    if (f) { reserved.add(f.primerId); reserved.add(f.segonId) }
+  }
+
+  const days: PlannedDay[] = menu.days.map((d) => ({ ...d }))
+  const usedIds: string[] = []
+  const toFill: { di: number; slot: Slot }[] = []
+
+  days.forEach((day, di) => {
+    const att = byDate.get(day.date)
+    for (const slot of ['dinar', 'sopar'] as Slot[]) {
+      const newAtt = att ? att[slot] : day[slot].attendees
+      const old = menu.days[di][slot]
+      if (newAtt.length === 0) {
+        day[slot] = { slot, attendees: [], primerId: null, segonId: null }
+      } else if (old.primerId || old.segonId) {
+        day[slot] = { ...old, attendees: [...newAtt] } // keep dishes, update who
+        usedIds.push(...[old.primerId, old.segonId].filter(Boolean) as string[])
+      } else {
+        day[slot] = { slot, attendees: [...newAtt], primerId: null, segonId: null }
+        toFill.push({ di, slot })
+      }
+    }
+  })
+
+  let seed = baseSeed
+  for (const { di, slot } of toFill) {
+    const day = days[di]
+    const opts = slot === 'sopar'
+      ? { avoidProteins: proteinTags(day.dinar.segonId), preferProtein: 'ou' }
+      : {}
+    const filled = planMeal(day.date, slot, day[slot].attendees, season, usedIds, [], seed, peopleCount, reserved, opts)
+    seed += 2
+    usedIds.push(...[filled.primerId, filled.segonId].filter(Boolean) as string[])
+    days[di][slot] = filled
+  }
+  return { season, days }
+}
+
 /** Re-pick a single course of a single meal, avoiding dishes used that week. */
 export function rerollMeal(
   menu: WeeklyMenu,

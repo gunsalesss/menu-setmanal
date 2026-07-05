@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { seasonForDate } from './season'
-import { generateMenu } from './generate'
+import { generateMenu, syncMenu } from './generate'
 import { buildGroceryList, groceryKey } from './grocery'
 import { groceryToText, menuToText } from './export'
 import { checkNutrition, fixRule } from './nutrition'
@@ -46,6 +46,36 @@ describe('generateMenu', () => {
     const menu = generateMenu(att)
     expect(menu.days[0].sopar.primerId).toBeNull()
     expect(menu.days[0].sopar.segonId).toBeNull()
+  })
+})
+
+describe('syncMenu', () => {
+  const week4 = (): AttendanceDay[] =>
+    ['2026-06-16', '2026-06-17', '2026-06-18'].map((date) => ({
+      date, dinar: ['adria', 'helena'], sopar: ['adria', 'helena'],
+    }))
+
+  it('clears a meal when it loses all attendees and keeps the rest', () => {
+    const menu = generateMenu(week4(), 5)
+    const keptDinar = menu.days[0].dinar.segonId
+    const att = week4()
+    att[0].sopar = [] // nobody home for Monday-ish sopar
+    const synced = syncMenu(menu, att, 2, 5)
+    expect(synced.days[0].sopar.primerId).toBeNull()
+    expect(synced.days[0].sopar.segonId).toBeNull()
+    // untouched meal keeps its dishes
+    expect(synced.days[0].dinar.segonId).toBe(keptDinar)
+  })
+
+  it('fills a meal that gains attendees (was skipped)', () => {
+    const att = week4()
+    att[1].dinar = [] // skipped at generation
+    const menu = generateMenu(att, 5)
+    expect(menu.days[1].dinar.segonId).toBeNull()
+    const att2 = week4() // everyone back home
+    const synced = syncMenu(menu, att2, 2, 5)
+    expect(synced.days[1].dinar.segonId).toBeTruthy()
+    expect(synced.days[1].dinar.attendees).toEqual(['adria', 'helena'])
   })
 })
 
