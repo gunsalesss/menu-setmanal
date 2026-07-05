@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { AttendanceDay, Course, Person, PersonInfo, Slot, WeeklyMenu } from './core/types'
 import { DEFAULT_PEOPLE, MAX_PEOPLE, MIN_PEOPLE } from './core/types'
-import { generateMenu, rerollMeal } from './core/generate'
+import { generateMenu, rerollMeal, syncMenu } from './core/generate'
 import { fixRule } from './core/nutrition'
 
 const PEOPLE_KEY = 'menu-people'
@@ -122,16 +122,19 @@ export const useStore = create<State>((set) => ({
     set((s) => ({ attendance: buildRange(startISO, days, s.people.map((p) => p.id)), menu: null })),
 
   toggleAttendee: (date, slot, person) =>
-    set((s) => ({
-      attendance: s.attendance.map((d) => {
+    set((s) => {
+      const attendance = s.attendance.map((d) => {
         if (d.date !== date) return d
         const has = d[slot].includes(person)
         return {
           ...d,
           [slot]: has ? d[slot].filter((p) => p !== person) : [...d[slot], person],
         }
-      }),
-    })),
+      })
+      // If a menu is already on screen, keep it in sync with the new attendance.
+      const menu = s.menu ? syncMenu(s.menu, attendance, s.people.length) : s.menu
+      return { attendance, menu }
+    }),
 
   // A fresh menu starts with nothing checked off.
   generate: () =>
