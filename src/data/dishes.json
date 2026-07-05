@@ -1997,11 +1997,11 @@
         "scalable": true
       },
       {
-        "item": "hummus",
-        "qty": 2,
-        "unit": "cullerada",
-        "category": "llegums-cereals",
-        "scalable": false
+        "item": "hummus preparat",
+        "qty": 1,
+        "unit": "envàs",
+        "category": "altres",
+        "scalable": true
       }
     ]
   },
