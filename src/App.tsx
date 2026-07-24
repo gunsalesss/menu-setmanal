@@ -8,6 +8,7 @@ import { GroceryView } from './components/GroceryView'
 import { TextExport } from './components/TextExport'
 import { NamesEditor } from './components/NamesEditor'
 import { UpdateBanner } from './components/UpdateBanner'
+import { DishExplorer } from './components/DishExplorer'
 
 export function App() {
   const { attendance, menu, setRange, generate, people, theme, toggleTheme } = useStore()
@@ -75,6 +76,11 @@ export function App() {
           <section className="card"><h2>6. Exportar (WhatsApp)</h2><TextExport /></section>
         </>
       )}
+
+      <section className="card">
+        <h2>🔎 Consultar Ingredients</h2>
+        <DishExplorer />
+      </section>
     </div>
   )
 }

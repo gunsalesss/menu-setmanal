@@ -80,6 +80,20 @@ table.menu td { text-align: left; vertical-align: top; }
 .grocery li input[type="checkbox"] { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; }
 .grocery li label.checked { color: var(--muted); text-decoration: line-through; }
 .qty { color: var(--muted); }
+
+/* ── Dish explorer ──────────────────────────────────────────────────────── */
+.explorer-search { width: 100%; margin-bottom: .6rem; }
+.explorer-list { list-style: none; padding: 0; margin: 0; max-height: 16rem; overflow-y: auto; display: flex; flex-direction: column; }
+.explorer-list li button { display: block; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; padding: .5rem .25rem; }
+.explorer-list li button:hover { background: var(--btn-hover); }
+.explorer-empty { padding: .5rem .25rem; }
+.explorer-back { background: transparent; border: none; color: var(--accent); padding: .2rem 0; font-size: .9rem; }
+.explorer-detail h3 { margin: .3rem 0 .2rem; }
+.explorer-meta { color: var(--muted); font-size: .82rem; margin: 0 0 .8rem; }
+.explorer-ings { margin: .3rem 0 1rem; padding-left: 1.2rem; }
+.explorer-ings li { padding: .1rem 0; }
+.explorer-steps { margin: .3rem 0 0; padding-left: 1.2rem; }
+.explorer-steps li { padding: .2rem 0; }
 .grocery-add { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: .75rem; }
 .grocery-add input { flex: 1; min-width: 8rem; }
 .extra-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
