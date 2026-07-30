@@ -3684,13 +3684,6 @@
     ],
     "ingredients": [
       {
-        "item": "cogombre",
-        "qty": 1,
-        "unit": "u",
-        "category": "verdura-fruita",
-        "scalable": true
-      },
-      {
         "item": "alvocat",
         "qty": 1,
         "unit": "u",
@@ -3698,11 +3691,18 @@
         "scalable": true
       },
       {
-        "item": "iogurt natural",
-        "qty": 1,
+        "item": "cogombre",
+        "qty": 2,
         "unit": "u",
-        "category": "lactics-ous",
+        "category": "verdura-fruita",
         "scalable": true
+      },
+      {
+        "item": "aigua",
+        "qty": 0.5,
+        "unit": "got",
+        "category": "altres",
+        "scalable": false
       },
       {
         "item": "all",
@@ -3711,10 +3711,11 @@
         "category": "verdura-fruita"
       },
       {
-        "item": "llimona",
-        "qty": 1,
-        "unit": "u",
-        "category": "verdura-fruita"
+        "item": "suc de llimona",
+        "qty": 2,
+        "unit": "cullerada",
+        "category": "herbes-condiments",
+        "scalable": true
       }
     ]
   }
