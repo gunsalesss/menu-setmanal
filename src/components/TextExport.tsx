@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useStore } from '../store'
 import { menuToText, groceryToText } from '../core/export'
+import type { WeeklyMenu } from '../core/types'
 
 function WhatsAppIcon() {
   return (
@@ -39,8 +40,20 @@ function CopyBox(
   )
 }
 
+const MONTHS_CA = ['gener', 'febrer', 'març', 'abril', 'maig', 'juny',
+  'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre']
+
+/** Human range label for the menu, e.g. "5–11 juliol" or "28 juny – 4 juliol". */
+function menuRangeLabel(menu: WeeklyMenu): string {
+  const dates = menu.days.map((d) => d.date).sort()
+  const [, fmo, fdd] = dates[0].split('-').map(Number)
+  const [, lmo, ldd] = dates[dates.length - 1].split('-').map(Number)
+  if (fmo === lmo) return `${fdd}–${ldd} ${MONTHS_CA[fmo - 1]}`
+  return `${fdd} ${MONTHS_CA[fmo - 1]} – ${ldd} ${MONTHS_CA[lmo - 1]}`
+}
+
 /** Capture the on-screen menu grid as a PNG and share it (WhatsApp on mobile). */
-async function shareMenuPhoto() {
+async function shareMenuPhoto(title: string, filename: string) {
   const el = document.getElementById('menu-grid')
   if (!el) return
   el.classList.add('capturing') // hide the per-course action buttons
@@ -50,19 +63,19 @@ async function shareMenuPhoto() {
     const canvas = await html2canvas(el, { backgroundColor: bg, scale: 2 })
     const blob: Blob | null = await new Promise((res) => canvas.toBlob(res, 'image/png'))
     if (!blob) return
-    const file = new File([blob], 'menu-setmanal.png', { type: 'image/png' })
+    const file = new File([blob], filename, { type: 'image/png' })
     const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean }
     // On touch devices the native share sheet includes WhatsApp — use it.
     const isTouch = matchMedia('(pointer: coarse)').matches
     if (isTouch && nav.canShare?.({ files: [file] })) {
-      await nav.share({ files: [file], title: 'Menú setmanal' })
+      await nav.share({ files: [file], title })
     } else {
       // Desktop: WhatsApp Web can't be handed an image via the web, so we
       // download the photo and open WhatsApp Web to drag it into the chat.
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'menu-setmanal.png'
+      a.download = filename
       a.click()
       URL.revokeObjectURL(url)
       window.open('https://web.whatsapp.com/', '_blank', 'noopener')
@@ -86,7 +99,8 @@ export function TextExport() {
   const sharePhoto = async () => {
     if (photoBusy) return
     setPhotoBusy(true)
-    await shareMenuPhoto()
+    const range = menuRangeLabel(menu)
+    await shareMenuPhoto(`Menú ${range}`, `menu-${menu.days[0]?.date ?? ''}.png`)
     setPhotoBusy(false)
   }
 
