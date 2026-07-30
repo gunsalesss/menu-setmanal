@@ -1,9 +1,9 @@
 # Menú setmanal
 
-Generador de menús setmanals segons la temporada de l'any, adaptat a dues persones,
-amb llista de la compra i exportació per WhatsApp.
+Generador de menús setmanals segons la temporada de l'any, per a 1–4 persones,
+amb anàlisi nutricional, llista de la compra i exportació per WhatsApp.
 
-🌐 **En línia:** https://gunsaless.github.io/menu-setmanal/
+🌐 **En línia:** https://gunsalesss.github.io/menu-setmanal/
 
 ## Engegar
 
@@ -21,24 +21,31 @@ npm run build    # build estàtic a /dist (desplegable a qualsevol host)
    Per defecte els caps de setmana es marquen com a fora.
 3. **Generar** — omple cada àpat amb un **primer** i un **segon** des de la base de dades de
    la temporada, evitant repeticions i variant proteïnes. Cada generació és aleatòria.
-4. **Llista de la compra** — agrega i escala els ingredients pels comensals. Marca el que ja
+4. **Anàlisi nutricional** — comprova regles basades en evidència (varietat de proteïnes, peix,
+   llegums, cereals integrals, poca carn vermella, verdures...) i ofereix un botó per corregir-les.
+5. **Llista de la compra** — agrega i escala els ingredients pels comensals. Marca el que ja
    tens i desapareixerà de l'exportació.
-5. **Exportar** — dos quadres de text independents (menú i llista) per enganxar a WhatsApp.
+6. **Exportar** — quadres de text independents (menú i llista) per enganxar a WhatsApp,
+   amb botó d'enviar directe i de compartir una **foto** de la graella.
 
 Funcions addicionals:
 
-- **🎲 Rebarrejar** cada plat (primer o segon) individualment.
-- **Editar els noms** de les dues persones (botó del capçal); s'apliquen a tota l'app i es guarden.
+- **🎲 Rebarrejar** o **✏️ triar** cada plat (primer o segon) individualment, i fer un àpat de **plat únic**.
+- **1–4 persones**: afegir/treure comensals i **editar els noms** (botó del capçal); s'apliquen a tota l'app i es guarden.
+- **Mode fosc** (per defecte) / clar amb un botó.
+- Afegir articles fixos o puntuals a la llista de la compra (p. ex. aigua).
+- **🔎 Consultar ingredients** de qualsevol plat de la base de dades.
 
 Esmorzar, mig matí i berenar es deixen com a rutines fixes (no es generen).
 
 ### Regles per defecte (es poden canviar rebarrejant)
 
 - Caps de setmana → tots els àpats fora.
-- Dilluns sopar amb tots dos a casa → *mongeta i pastanaga al vapor* + *salmó a la planxa*.
-- Diumenge sopar amb almenys 1 a casa → *pinya* + *caldo* (tardor/hivern) o *gaspatxo* (primavera/estiu).
+- Dilluns → *mongeta i pastanaga al vapor* + *salmó a la planxa*.
+- Divendres → *hummus amb pastanaga* + *smash burger*.
+- Diumenge → *caldo* (tardor/hivern) o *gaspatxo* (primavera/estiu) + *pinya*.
 
-L'exportació marca `_Fora_` quan tots dos mengen fora i `_<Nom> fora_` quan només en falta un.
+L'exportació marca `_Fora_` quan tothom menja fora i `_<Nom> fora_` quan només en falta algú.
 
 ## La base de dades (el que editaràs tu)
 
@@ -62,7 +69,7 @@ Per afegir un plat, copia un bloc existent a `dishes.json` i edita'l. Els camps:
 
 ```
 src/data/      → base de dades editable (JSON)
-src/core/      → lògica pura en TypeScript (sense React): season, generate, grocery, export
+src/core/      → lògica pura en TypeScript (sense React): season, generate, nutrition, grocery, export
 src/components → UI React
 src/store.ts   → estat (Zustand)
 ```
@@ -71,7 +78,7 @@ La lògica de `core/` no depèn de React: és testejable i es podria moure a un 
 
 ## Desplegar
 
-L'app ja està publicada a **GitHub Pages**: https://gunsaless.github.io/menu-setmanal/
+L'app ja està publicada a **GitHub Pages**: https://gunsalesss.github.io/menu-setmanal/
 
 El workflow `.github/workflows/deploy.yml` reconstrueix i publica automàticament a cada
 `push` a `main` (Pages amb *Source: GitHub Actions*).
