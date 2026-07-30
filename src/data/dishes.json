@@ -3403,5 +3403,319 @@
         "scalable": false
       }
     ]
+  },
+  {
+    "id": "amanida-completa-alvocat-escalivat",
+    "name": "Amanida completa amb alvocat i pebrot escalivat",
+    "seasons": [
+      "estiu",
+      "tardor"
+    ],
+    "slots": [
+      "dinar",
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "primer"
+    ],
+    "tags": [
+      "amanida",
+      "verdura"
+    ],
+    "ingredients": [
+      {
+        "item": "fulla verda",
+        "qty": 1,
+        "unit": "bossa",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "alvocat",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "pebrot escalivat",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "fruits secs",
+        "qty": 1,
+        "unit": "grapat",
+        "category": "fruits-secs-llavors",
+        "scalable": true
+      },
+      {
+        "item": "llavors de lli",
+        "qty": 1,
+        "unit": "cullerada",
+        "category": "fruits-secs-llavors"
+      },
+      {
+        "item": "orenga",
+        "category": "herbes-condiments",
+        "scalable": false
+      }
+    ]
+  },
+  {
+    "id": "amanida-completa-pollastre",
+    "name": "Amanida completa amb pollastre",
+    "seasons": [
+      "primavera",
+      "estiu",
+      "tardor"
+    ],
+    "slots": [
+      "dinar",
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "segon"
+    ],
+    "tags": [
+      "amanida",
+      "carn",
+      "llegum"
+    ],
+    "ingredients": [
+      {
+        "item": "fulla verda",
+        "qty": 1,
+        "unit": "bossa",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "cuixa desossada de pollastre",
+        "qty": 300,
+        "unit": "g",
+        "category": "peix-carn",
+        "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "cigrons cuits",
+        "qty": 200,
+        "unit": "g",
+        "category": "llegums-cereals",
+        "scalable": true
+      },
+      {
+        "item": "fruits secs",
+        "qty": 1,
+        "unit": "grapat",
+        "category": "fruits-secs-llavors",
+        "scalable": true
+      },
+      {
+        "item": "llavors de lli o sèsam",
+        "qty": 1,
+        "unit": "cullerada",
+        "category": "fruits-secs-llavors"
+      }
+    ]
+  },
+  {
+    "id": "esqueixada-llegums",
+    "name": "Esqueixada de llegums",
+    "seasons": [
+      "estiu",
+      "tardor"
+    ],
+    "slots": [
+      "dinar",
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "segon"
+    ],
+    "tags": [
+      "llegum",
+      "amanida"
+    ],
+    "ingredients": [
+      {
+        "item": "cigrons cuits",
+        "qty": 250,
+        "unit": "g",
+        "category": "llegums-cereals",
+        "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "ceba",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "pebrot",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "all",
+        "qty": 1,
+        "unit": "dent",
+        "category": "verdura-fruita"
+      }
+    ]
+  },
+  {
+    "id": "quinoa-samfaina-nous",
+    "name": "Quinoa amb samfaina i nous",
+    "seasons": [
+      "estiu",
+      "tardor"
+    ],
+    "slots": [
+      "dinar",
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "primer"
+    ],
+    "tags": [
+      "verdura",
+      "vegetaria"
+    ],
+    "ingredients": [
+      {
+        "item": "quinoa",
+        "qty": 160,
+        "unit": "g",
+        "category": "llegums-cereals",
+        "scalable": true
+      },
+      {
+        "item": "albergínia",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "carbassó",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "pebrot",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "ceba",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "nous",
+        "qty": 1,
+        "unit": "grapat",
+        "category": "fruits-secs-llavors",
+        "scalable": true
+      }
+    ]
+  },
+  {
+    "id": "crema-freda-cogombre-alvocat",
+    "name": "Crema freda de cogombre i alvocat",
+    "seasons": [
+      "estiu"
+    ],
+    "slots": [
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "primer"
+    ],
+    "tags": [
+      "crema",
+      "verdura",
+      "vegetaria"
+    ],
+    "ingredients": [
+      {
+        "item": "cogombre",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "alvocat",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "iogurt natural",
+        "qty": 1,
+        "unit": "u",
+        "category": "lactics-ous",
+        "scalable": true
+      },
+      {
+        "item": "all",
+        "qty": 1,
+        "unit": "dent",
+        "category": "verdura-fruita"
+      },
+      {
+        "item": "llimona",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita"
+      }
+    ]
   }
 ]
