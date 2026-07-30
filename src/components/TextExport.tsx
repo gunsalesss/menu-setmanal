@@ -99,8 +99,8 @@ export function TextExport() {
   const sharePhoto = async () => {
     if (photoBusy) return
     setPhotoBusy(true)
-    const range = menuRangeLabel(menu)
-    await shareMenuPhoto(`Menú ${range}`, `menu-${menu.days[0]?.date ?? ''}.png`)
+    const title = `Menú ${menuRangeLabel(menu)}`
+    await shareMenuPhoto(title, `${title}.png`)
     setPhotoBusy(false)
   }
 
