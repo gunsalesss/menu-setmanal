@@ -39,17 +39,69 @@ function CopyBox(
   )
 }
 
+/** Capture the on-screen menu grid as a PNG and share it (WhatsApp on mobile). */
+async function shareMenuPhoto() {
+  const el = document.getElementById('menu-grid')
+  if (!el) return
+  el.classList.add('capturing') // hide the per-course action buttons
+  try {
+    const { default: html2canvas } = await import('html2canvas') // lazy-loaded
+    const bg = getComputedStyle(document.body).backgroundColor || '#fff'
+    const canvas = await html2canvas(el, { backgroundColor: bg, scale: 2 })
+    const blob: Blob | null = await new Promise((res) => canvas.toBlob(res, 'image/png'))
+    if (!blob) return
+    const file = new File([blob], 'menu-setmanal.png', { type: 'image/png' })
+    const nav = navigator as Navigator & { canShare?: (d: unknown) => boolean }
+    // On touch devices the native share sheet includes WhatsApp — use it.
+    const isTouch = matchMedia('(pointer: coarse)').matches
+    if (isTouch && nav.canShare?.({ files: [file] })) {
+      await nav.share({ files: [file], title: 'Menú setmanal' })
+    } else {
+      // Desktop: WhatsApp Web can't be handed an image via the web, so we
+      // download the photo and open WhatsApp Web to drag it into the chat.
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'menu-setmanal.png'
+      a.click()
+      URL.revokeObjectURL(url)
+      window.open('https://web.whatsapp.com/', '_blank', 'noopener')
+    }
+  } catch {
+    /* user cancelled the share, or capture failed */
+  } finally {
+    el.classList.remove('capturing')
+  }
+}
+
 export function TextExport() {
   const menu = useStore((s) => s.menu)
   const checked = useStore((s) => s.checkedGrocery)
   const people = useStore((s) => s.people)
   const extraItems = useStore((s) => s.extraItems)
   const [grouped, setGrouped] = useState(true)
+  const [photoBusy, setPhotoBusy] = useState(false)
   if (!menu) return null
+
+  const sharePhoto = async () => {
+    if (photoBusy) return
+    setPhotoBusy(true)
+    await shareMenuPhoto()
+    setPhotoBusy(false)
+  }
 
   return (
     <div className="export">
-      <CopyBox title="Menú" text={menuToText(menu, people)} rows={12} />
+      <CopyBox
+        title="Menú"
+        text={menuToText(menu, people)}
+        rows={12}
+        control={
+          <button className="wa-btn" onClick={sharePhoto} disabled={photoBusy}>
+            <WhatsAppIcon /> {photoBusy ? 'Preparant…' : 'Foto'}
+          </button>
+        }
+      />
       {/* Items checked off in the grocery view are excluded from this list. */}
       <CopyBox
         title="Llista de la compra"

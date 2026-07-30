@@ -79,7 +79,7 @@ export function MenuView() {
   if (!menu) return null
   return (
     <div className="table-scroll">
-      <table className="grid menu">
+      <table className="grid menu" id="menu-grid">
         <thead><tr><th>Dia</th><th>Dinar</th><th>Sopar</th></tr></thead>
         <tbody>
           {menu.days.map((d) => (
