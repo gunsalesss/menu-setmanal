@@ -109,11 +109,19 @@ describe('single-dish meal', () => {
 
     const single: WeeklyMenu = {
       ...base,
-      days: [{ ...base.days[0], dinar: { ...base.days[0].dinar, single: true } }],
+      days: [{ ...base.days[0], dinar: { ...base.days[0].dinar, single: 'segon' } }],
     }
     const oneCourse = Object.values(buildGroceryList(single)).flat().map((i) => i.item)
     expect(oneCourse).not.toContain('fulla verda') // starter excluded
     expect(oneCourse).toContain('salmó') // main still there
+
+    const primerOnly: WeeklyMenu = {
+      ...base,
+      days: [{ ...base.days[0], dinar: { ...base.days[0].dinar, single: 'primer' } }],
+    }
+    const starterOnly = Object.values(buildGroceryList(primerOnly)).flat().map((i) => i.item)
+    expect(starterOnly).toContain('fulla verda') // starter kept
+    expect(starterOnly).not.toContain('salmó') // main excluded
   })
 })
 

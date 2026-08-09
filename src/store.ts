@@ -98,8 +98,8 @@ interface State {
   setDish: (date: string, slot: Slot, course: Course, dishId: string) => void
   /** Resolve a nutritional alert by swapping dishes in the current menu. */
   fixNutrition: (ruleId: string) => void
-  /** Toggle a meal between single-dish (main only) and two courses. */
-  toggleSingle: (date: string, slot: Slot) => void
+  /** Toggle a course as the meal's sole dish (click again to restore two courses). */
+  toggleSingle: (date: string, slot: Slot, course: Course) => void
   /** Extra items the user adds to the grocery list by hand; persisted. */
   extraItems: string[]
   addExtraItem: (name: string) => void
@@ -229,11 +229,13 @@ export const useStore = create<State>((set) => ({
   fixNutrition: (ruleId) =>
     set((s) => (s.menu ? { menu: fixRule(s.menu, ruleId) } : {})),
 
-  toggleSingle: (date, slot) =>
+  toggleSingle: (date, slot, course) =>
     set((s) => {
       if (!s.menu) return {}
       const days = s.menu.days.map((d) =>
-        d.date === date ? { ...d, [slot]: { ...d[slot], single: !d[slot].single } } : d,
+        d.date === date
+          ? { ...d, [slot]: { ...d[slot], single: d[slot].single === course ? undefined : course } }
+          : d,
       )
       return { menu: { ...s.menu, days } }
     }),
