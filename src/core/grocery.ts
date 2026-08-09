@@ -38,7 +38,10 @@ export function buildGroceryList(
 
   for (const day of menu.days) {
     for (const meal of [day.dinar, day.sopar]) {
-      const courseIds = meal.single ? [meal.segonId] : [meal.primerId, meal.segonId]
+      const courseIds =
+        meal.single === 'primer' ? [meal.primerId]
+        : meal.single === 'segon' ? [meal.segonId]
+        : [meal.primerId, meal.segonId]
       for (const dishId of courseIds) {
         if (!dishId) continue
         const dish = dishById(dishId)

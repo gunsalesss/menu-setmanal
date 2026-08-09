@@ -33,8 +33,9 @@ function mealBlock(label: string, meal: PlannedMeal, people: PersonInfo[]): stri
   const header = absent.length > 0
     ? `${label} _${absent.map((p) => p.name).join(', ')} fora_`
     : `${label}:`
-  const courses = meal.single
-    ? [`- ${dishName(meal.segonId)}`]
+  const courses =
+    meal.single === 'primer' ? [`- ${dishName(meal.primerId)}`]
+    : meal.single === 'segon' ? [`- ${dishName(meal.segonId)}`]
     : [`- ${dishName(meal.primerId)}`, `- ${dishName(meal.segonId)}`]
   return [header, ...courses]
 }

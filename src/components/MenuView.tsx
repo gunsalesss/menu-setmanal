@@ -11,10 +11,10 @@ function label(iso: string) {
 }
 
 function CourseRow(
-  { date, slot, course, dishId, single, onToggleSingle }:
+  { date, slot, course, dishId, isSingle, onToggleSingle }:
   {
     date: string; slot: Slot; course: Course; dishId: string | null
-    single?: boolean; onToggleSingle?: () => void
+    isSingle: boolean; onToggleSingle: () => void
   },
 ) {
   const reroll = useStore((s) => s.reroll)
@@ -29,15 +29,13 @@ function CourseRow(
       <span className="course-actions">
         <button className="reroll" title={`Canviar ${course} a l'atzar`} onClick={() => reroll(date, slot, course)}>🎲</button>
         <button className="reroll" title={`Triar ${course}`} onClick={() => setPicking(true)}>✏️</button>
-        {onToggleSingle && (
-          <button
-            className={`reroll ${single ? 'active' : ''}`}
-            title={single ? 'Tornar a dos plats' : 'Fer plat únic'}
-            onClick={onToggleSingle}
-          >
-            {single ? '②' : '①'}
-          </button>
-        )}
+        <button
+          className={`reroll ${isSingle ? 'active' : ''}`}
+          title={isSingle ? 'Tornar a dos plats' : 'Fer plat únic'}
+          onClick={onToggleSingle}
+        >
+          {isSingle ? '②' : '①'}
+        </button>
       </span>
       {picking && (
         <DishPicker
@@ -58,13 +56,18 @@ function MealCell({ date, slot, meal }: { date: string; slot: Slot; meal: Planne
   const nameOf = (id: string) => people.find((p) => p.id === id)?.name ?? id
   return (
     <div className="meal">
-      {!meal.single && (
-        <CourseRow date={date} slot={slot} course="primer" dishId={meal.primerId} />
+      {meal.single !== 'segon' && (
+        <CourseRow
+          date={date} slot={slot} course="primer" dishId={meal.primerId}
+          isSingle={meal.single === 'primer'} onToggleSingle={() => toggleSingle(date, slot, 'primer')}
+        />
       )}
-      <CourseRow
-        date={date} slot={slot} course="segon" dishId={meal.segonId}
-        single={meal.single} onToggleSingle={() => toggleSingle(date, slot)}
-      />
+      {meal.single !== 'primer' && (
+        <CourseRow
+          date={date} slot={slot} course="segon" dishId={meal.segonId}
+          isSingle={meal.single === 'segon'} onToggleSingle={() => toggleSingle(date, slot, 'segon')}
+        />
+      )}
       <div className="meal-foot">
         <span className="who" title={meal.attendees.map(nameOf).join(' + ')}>
           {meal.attendees.map((p) => nameOf(p)[0]?.toUpperCase()).join('+')}

@@ -21,9 +21,10 @@ function collect(menu: WeeklyMenu): { meals: Meal[]; all: Dish[]; mains: Dish[] 
   for (const day of menu.days) {
     for (const m of [day.dinar, day.sopar]) {
       if (m.attendees.length === 0) continue
-      const primer = m.single || !m.primerId ? undefined : dishById(m.primerId)
-      const main = m.segonId ? dishById(m.segonId) : undefined
-      meals.push({ dishes: [primer, main].filter(Boolean) as Dish[], main })
+      const primer = m.single !== 'segon' && m.primerId ? dishById(m.primerId) : undefined
+      const segon = m.single !== 'primer' && m.segonId ? dishById(m.segonId) : undefined
+      const main = segon ?? primer
+      meals.push({ dishes: [primer, segon].filter(Boolean) as Dish[], main })
     }
   }
   const all = meals.flatMap((m) => m.dishes)
