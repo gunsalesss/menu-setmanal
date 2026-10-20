@@ -3721,7 +3721,7 @@
   },
   {
     "id": "llenties-saltejades-verdures",
-    "name": "Llenties saltejades amb verdures",
+    "name": "Llenties saltejades amb verdures i pollastre",
     "seasons": [
       "estiu",
       "tardor"
@@ -3736,6 +3736,7 @@
     ],
     "tags": [
       "llegum",
+      "carn",
       "verdura"
     ],
     "ingredients": [
@@ -3747,6 +3748,13 @@
         "scalable": true
       },
       {
+        "item": "cuixa desossada de pollastre",
+        "qty": 300,
+        "unit": "g",
+        "category": "peix-carn",
+        "scalable": true
+      },
+      {
         "item": "ceba",
         "qty": 1,
         "unit": "u",
@@ -3755,13 +3763,6 @@
       },
       {
         "item": "pastanaga",
-        "qty": 1,
-        "unit": "u",
-        "category": "verdura-fruita",
-        "scalable": true
-      },
-      {
-        "item": "carbassó",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
