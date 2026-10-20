@@ -60,6 +60,8 @@ export interface Dish {
   steps?: string[]
   /** A "lliure" / free-choice slot: shown but excluded from grocery list. */
   free?: boolean
+  /** Only placed by an explicit rule/button (e.g. match-day lunch), never picked at random. */
+  fixedOnly?: boolean
 }
 
 /** Which dates and who eats each meal at home. */
@@ -86,6 +88,8 @@ export interface PlannedDay {
   date: string
   dinar: PlannedMeal
   sopar: PlannedMeal
+  /** Weekend match day ("hi ha partit"): lunch is forced to the match-day dish. */
+  match?: boolean
 }
 
 export interface WeeklyMenu {

@@ -11,6 +11,7 @@ export function dishById(id: string): Dish | undefined {
 export function poolFor(season: Season, slot: Slot, course?: Course): Dish[] {
   return ALL_DISHES.filter(
     (d) =>
+      !d.fixedOnly &&
       d.seasons.includes(season) &&
       d.slots.includes(slot) &&
       (course ? d.course.includes(course) : true),

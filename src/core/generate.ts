@@ -246,6 +246,43 @@ export function rerollMeal(
   return { ...menu, days }
 }
 
+/** The dish served for lunch on a weekend "match day". */
+export const MATCH_LUNCH_ID = 'arros-fregit-gall-dindi'
+
+/**
+ * Toggle a day's weekend "match day" lunch. When on, lunch becomes the single
+ * match-day dish; when off, lunch is regenerated from the normal pool.
+ */
+export function setMatchLunch(
+  menu: WeeklyMenu,
+  date: string,
+  on: boolean,
+  seed: number,
+): WeeklyMenu {
+  const usedIds = chosenIds(menu.days)
+  const days = menu.days.map((d) => {
+    if (d.date !== date) return d
+    if (on) {
+      return {
+        ...d,
+        match: true,
+        dinar: { ...d.dinar, primerId: null, segonId: MATCH_LUNCH_ID, single: 'segon' as Course },
+      }
+    }
+    const meal = d.dinar
+    if (meal.attendees.length === 0) return { ...d, match: false, dinar: { ...meal, single: undefined } }
+    const primer = pickFromExcluding(poolFor(menu.season, 'dinar', 'primer'), usedIds, seed)
+    const segonPool = poolFor(menu.season, 'dinar', 'segon').filter((x) => x.id !== primer.id)
+    const segon = pickFromExcluding(segonPool, [...usedIds, primer.id], seed + 1)
+    return {
+      ...d,
+      match: false,
+      dinar: { ...meal, primerId: primer.id, segonId: segon.id, single: undefined },
+    }
+  })
+  return { ...menu, days }
+}
+
 function pickFromExcluding(pool: Dish[], usedIds: string[], seed: number): Dish {
   const fresh = pool.filter((d) => !usedIds.includes(d.id))
   const candidates = fresh.length ? fresh : pool

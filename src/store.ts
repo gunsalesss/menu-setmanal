@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { AttendanceDay, Course, Person, PersonInfo, Slot, WeeklyMenu } from './core/types'
 import { DEFAULT_PEOPLE, MAX_PEOPLE, MIN_PEOPLE } from './core/types'
-import { generateMenu, rerollMeal, syncMenu } from './core/generate'
+import { generateMenu, rerollMeal, setMatchLunch, syncMenu } from './core/generate'
 import { fixRule } from './core/nutrition'
 
 const PEOPLE_KEY = 'menu-people'
@@ -100,6 +100,8 @@ interface State {
   fixNutrition: (ruleId: string) => void
   /** Toggle a course as the meal's sole dish (click again to restore two courses). */
   toggleSingle: (date: string, slot: Slot, course: Course) => void
+  /** Toggle a weekend "match day": lunch becomes the match-day dish (or is regenerated). */
+  toggleMatch: (date: string) => void
   /** Extra items the user adds to the grocery list by hand; persisted. */
   extraItems: string[]
   addExtraItem: (name: string) => void
@@ -165,6 +167,15 @@ export const useStore = create<State>((set) => ({
       if (!s.menu) return {}
       const seed = s.rerollSeed + 1
       return { menu: rerollMeal(s.menu, date, slot, course, seed), rerollSeed: seed }
+    }),
+
+  toggleMatch: (date) =>
+    set((s) => {
+      if (!s.menu) return {}
+      const day = s.menu.days.find((d) => d.date === date)
+      if (!day) return {}
+      const seed = s.rerollSeed + 1
+      return { menu: setMatchLunch(s.menu, date, !day.match, seed), rerollSeed: seed }
     }),
 
   toggleGrocery: (key) =>
