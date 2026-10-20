@@ -100,6 +100,8 @@ interface State {
   fixNutrition: (ruleId: string) => void
   /** Toggle a course as the meal's sole dish (click again to restore two courses). */
   toggleSingle: (date: string, slot: Slot, course: Course) => void
+  /** Toggle a weekend "match day" in the attendance grid: lunch becomes the match-day dish. */
+  toggleMatch: (date: string) => void
   /** Extra items the user adds to the grocery list by hand; persisted. */
   extraItems: string[]
   addExtraItem: (name: string) => void
@@ -165,6 +167,18 @@ export const useStore = create<State>((set) => ({
       if (!s.menu) return {}
       const seed = s.rerollSeed + 1
       return { menu: rerollMeal(s.menu, date, slot, course, seed), rerollSeed: seed }
+    }),
+
+  toggleMatch: (date) =>
+    set((s) => {
+      const turnOn = !s.attendance.find((d) => d.date === date)?.match
+      // At most one match day: turning one on clears any other.
+      const attendance = s.attendance.map((d) =>
+        d.date === date ? { ...d, match: turnOn } : { ...d, match: turnOn ? false : d.match },
+      )
+      // Keep any on-screen menu in sync so the forced lunch appears/disappears now.
+      const menu = s.menu ? syncMenu(s.menu, attendance, s.people.length) : s.menu
+      return { attendance, menu }
     }),
 
   toggleGrocery: (key) =>

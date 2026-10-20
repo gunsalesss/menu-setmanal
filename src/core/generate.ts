@@ -151,7 +151,9 @@ export function generateMenu(
       (id) => dishById(id)?.tags ?? [],
     )
 
-    const dinar = planMeal(day.date, 'dinar', day.dinar, season, usedIds, recentTags, seed, peopleCount, reserved)
+    const dinar = day.match && day.dinar.length
+      ? matchMeal(day.dinar)
+      : planMeal(day.date, 'dinar', day.dinar, season, usedIds, recentTags, seed, peopleCount, reserved)
     seed += 2
     usedIds.push(...[dinar.primerId, dinar.segonId].filter(Boolean) as string[])
     // Dinner avoids lunch's protein and prefers egg.
@@ -197,12 +199,17 @@ export function syncMenu(
     for (const slot of ['dinar', 'sopar'] as Slot[]) {
       const newAtt = att ? att[slot] : day[slot].attendees
       const old = menu.days[di][slot]
+      const wantMatch = slot === 'dinar' && !!att?.match && newAtt.length > 0
       if (newAtt.length === 0) {
         day[slot] = { slot, attendees: [], primerId: null, segonId: null }
-      } else if (old.primerId || old.segonId) {
+      } else if (wantMatch) {
+        day[slot] = matchMeal(newAtt) // match day → forced single lunch
+        usedIds.push(MATCH_LUNCH_ID)
+      } else if ((old.primerId || old.segonId) && old.segonId !== MATCH_LUNCH_ID) {
         day[slot] = { ...old, attendees: [...newAtt] } // keep dishes, update who
         usedIds.push(...[old.primerId, old.segonId].filter(Boolean) as string[])
       } else {
+        // empty before, or a match dish that's no longer wanted → refill normally
         day[slot] = { slot, attendees: [...newAtt], primerId: null, segonId: null }
         toFill.push({ di, slot })
       }
@@ -244,6 +251,14 @@ export function rerollMeal(
     return { ...d, [slot]: { ...meal, [field]: next?.id ?? current } }
   })
   return { ...menu, days }
+}
+
+/** The dish served for lunch on a weekend "match day". */
+export const MATCH_LUNCH_ID = 'arros-fregit-gall-dindi'
+
+/** The forced single-dish lunch for a match day. */
+function matchMeal(attendees: Person[]): PlannedMeal {
+  return { slot: 'dinar', attendees: [...attendees], primerId: null, segonId: MATCH_LUNCH_ID, single: 'segon' }
 }
 
 function pickFromExcluding(pool: Dish[], usedIds: string[], seed: number): Dish {
