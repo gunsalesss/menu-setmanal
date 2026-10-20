@@ -171,8 +171,10 @@ export const useStore = create<State>((set) => ({
 
   toggleMatch: (date) =>
     set((s) => {
+      const turnOn = !s.attendance.find((d) => d.date === date)?.match
+      // At most one match day: turning one on clears any other.
       const attendance = s.attendance.map((d) =>
-        d.date === date ? { ...d, match: !d.match } : d,
+        d.date === date ? { ...d, match: turnOn } : { ...d, match: turnOn ? false : d.match },
       )
       // Keep any on-screen menu in sync so the forced lunch appears/disappears now.
       const menu = s.menu ? syncMenu(s.menu, attendance, s.people.length) : s.menu
