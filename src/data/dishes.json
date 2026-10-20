@@ -3718,5 +3718,69 @@
         "scalable": true
       }
     ]
+  },
+  {
+    "id": "llenties-saltejades-verdures",
+    "name": "Llenties saltejades amb verdures i pollastre",
+    "seasons": [
+      "estiu",
+      "tardor"
+    ],
+    "slots": [
+      "dinar",
+      "sopar"
+    ],
+    "servingsBase": 2,
+    "course": [
+      "segon"
+    ],
+    "tags": [
+      "llegum",
+      "carn",
+      "verdura"
+    ],
+    "ingredients": [
+      {
+        "item": "llenties cuites",
+        "qty": 250,
+        "unit": "g",
+        "category": "llegums-cereals",
+        "scalable": true
+      },
+      {
+        "item": "cuixa desossada de pollastre",
+        "qty": 300,
+        "unit": "g",
+        "category": "peix-carn",
+        "scalable": true
+      },
+      {
+        "item": "ceba",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "pastanaga",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "pebrot",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "all",
+        "qty": 1,
+        "unit": "dent",
+        "category": "verdura-fruita"
+      }
+    ]
   }
 ]
