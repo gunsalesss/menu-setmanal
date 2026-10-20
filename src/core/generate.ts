@@ -151,7 +151,9 @@ export function generateMenu(
       (id) => dishById(id)?.tags ?? [],
     )
 
-    const dinar = planMeal(day.date, 'dinar', day.dinar, season, usedIds, recentTags, seed, peopleCount, reserved)
+    const dinar = day.match && day.dinar.length
+      ? matchMeal(day.dinar)
+      : planMeal(day.date, 'dinar', day.dinar, season, usedIds, recentTags, seed, peopleCount, reserved)
     seed += 2
     usedIds.push(...[dinar.primerId, dinar.segonId].filter(Boolean) as string[])
     // Dinner avoids lunch's protein and prefers egg.
@@ -197,12 +199,17 @@ export function syncMenu(
     for (const slot of ['dinar', 'sopar'] as Slot[]) {
       const newAtt = att ? att[slot] : day[slot].attendees
       const old = menu.days[di][slot]
+      const wantMatch = slot === 'dinar' && !!att?.match && newAtt.length > 0
       if (newAtt.length === 0) {
         day[slot] = { slot, attendees: [], primerId: null, segonId: null }
-      } else if (old.primerId || old.segonId) {
+      } else if (wantMatch) {
+        day[slot] = matchMeal(newAtt) // match day → forced single lunch
+        usedIds.push(MATCH_LUNCH_ID)
+      } else if ((old.primerId || old.segonId) && old.segonId !== MATCH_LUNCH_ID) {
         day[slot] = { ...old, attendees: [...newAtt] } // keep dishes, update who
         usedIds.push(...[old.primerId, old.segonId].filter(Boolean) as string[])
       } else {
+        // empty before, or a match dish that's no longer wanted → refill normally
         day[slot] = { slot, attendees: [...newAtt], primerId: null, segonId: null }
         toFill.push({ di, slot })
       }
@@ -249,38 +256,9 @@ export function rerollMeal(
 /** The dish served for lunch on a weekend "match day". */
 export const MATCH_LUNCH_ID = 'arros-fregit-gall-dindi'
 
-/**
- * Toggle a day's weekend "match day" lunch. When on, lunch becomes the single
- * match-day dish; when off, lunch is regenerated from the normal pool.
- */
-export function setMatchLunch(
-  menu: WeeklyMenu,
-  date: string,
-  on: boolean,
-  seed: number,
-): WeeklyMenu {
-  const usedIds = chosenIds(menu.days)
-  const days = menu.days.map((d) => {
-    if (d.date !== date) return d
-    if (on) {
-      return {
-        ...d,
-        match: true,
-        dinar: { ...d.dinar, primerId: null, segonId: MATCH_LUNCH_ID, single: 'segon' as Course },
-      }
-    }
-    const meal = d.dinar
-    if (meal.attendees.length === 0) return { ...d, match: false, dinar: { ...meal, single: undefined } }
-    const primer = pickFromExcluding(poolFor(menu.season, 'dinar', 'primer'), usedIds, seed)
-    const segonPool = poolFor(menu.season, 'dinar', 'segon').filter((x) => x.id !== primer.id)
-    const segon = pickFromExcluding(segonPool, [...usedIds, primer.id], seed + 1)
-    return {
-      ...d,
-      match: false,
-      dinar: { ...meal, primerId: primer.id, segonId: segon.id, single: undefined },
-    }
-  })
-  return { ...menu, days }
+/** The forced single-dish lunch for a match day. */
+function matchMeal(attendees: Person[]): PlannedMeal {
+  return { slot: 'dinar', attendees: [...attendees], primerId: null, segonId: MATCH_LUNCH_ID, single: 'segon' }
 }
 
 function pickFromExcluding(pool: Dish[], usedIds: string[], seed: number): Dish {

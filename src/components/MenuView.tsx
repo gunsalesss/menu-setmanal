@@ -5,27 +5,9 @@ import { DishPicker } from './DishPicker'
 import type { Course, PlannedMeal, Slot } from '../core/types'
 
 const DAY_NAMES = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte']
-function weekday(iso: string) {
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(y, m - 1, d).getDay()
-}
 function label(iso: string) {
-  const [, m, d] = iso.split('-').map(Number)
-  return `${DAY_NAMES[weekday(iso)]} ${d}/${m}`
-}
-
-/** Weekend "match day" toggle: forces lunch to the match-day dish. */
-function MatchToggle({ date, on }: { date: string; on: boolean }) {
-  const toggleMatch = useStore((s) => s.toggleMatch)
-  return (
-    <button
-      className={`match-btn ${on ? 'active' : ''}`}
-      title={on ? 'Treure partit (regenerar dinar)' : 'Hi ha partit (dinar: arròs fregit)'}
-      onClick={() => toggleMatch(date)}
-    >
-      🏉
-    </button>
-  )
+  const [y, m, d] = iso.split('-').map(Number)
+  return `${DAY_NAMES[new Date(y, m - 1, d).getDay()]} ${d}/${m}`
 }
 
 function CourseRow(
@@ -103,22 +85,13 @@ export function MenuView() {
       <table className="grid menu" id="menu-grid">
         <thead><tr><th>Dia</th><th>Dinar</th><th>Sopar</th></tr></thead>
         <tbody>
-          {menu.days.map((d) => {
-            const dow = weekday(d.date)
-            const isWeekend = dow === 0 || dow === 6
-            return (
-              <tr key={d.date}>
-                <td>
-                  <div className="day-cell">
-                    <span>{label(d.date)}</span>
-                    {isWeekend && <MatchToggle date={d.date} on={!!d.match} />}
-                  </div>
-                </td>
-                <td><MealCell date={d.date} slot="dinar" meal={d.dinar} /></td>
-                <td><MealCell date={d.date} slot="sopar" meal={d.sopar} /></td>
-              </tr>
-            )
-          })}
+          {menu.days.map((d) => (
+            <tr key={d.date}>
+              <td>{label(d.date)}</td>
+              <td><MealCell date={d.date} slot="dinar" meal={d.dinar} /></td>
+              <td><MealCell date={d.date} slot="sopar" meal={d.sopar} /></td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

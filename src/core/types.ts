@@ -69,6 +69,8 @@ export interface AttendanceDay {
   date: string // ISO yyyy-mm-dd
   dinar: Person[] // who eats this meal AT HOME
   sopar: Person[]
+  /** Weekend match day ("hi ha partit"): lunch is forced to the match-day dish. */
+  match?: boolean
 }
 
 export interface PlannedMeal {
@@ -88,8 +90,6 @@ export interface PlannedDay {
   date: string
   dinar: PlannedMeal
   sopar: PlannedMeal
-  /** Weekend match day ("hi ha partit"): lunch is forced to the match-day dish. */
-  match?: boolean
 }
 
 export interface WeeklyMenu {
