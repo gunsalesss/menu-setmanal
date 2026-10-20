@@ -3845,5 +3845,47 @@
         "scalable": false
       }
     ]
+  },
+  {
+    "id": "crema-xampinyons",
+    "name": "Crema de xampinyons",
+    "seasons": [
+      "tardor"
+    ],
+    "slots": [
+      "sopar"
+    ],
+    "servingsBase": 4,
+    "course": [
+      "primer"
+    ],
+    "tags": [
+      "crema",
+      "verdura",
+      "vegetaria"
+    ],
+    "ingredients": [
+      {
+        "item": "xampinyons",
+        "qty": 400,
+        "unit": "g",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "ceba tendra",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      },
+      {
+        "item": "patata",
+        "qty": 1,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
+      }
+    ]
   }
 ]
