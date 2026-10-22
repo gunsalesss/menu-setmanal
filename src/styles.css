@@ -64,11 +64,12 @@ table.menu td { text-align: left; vertical-align: top; }
 
 /* ── Dish picker modal ──────────────────────────────────────────────────── */
 .picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
-.picker { background: var(--card); border-radius: 12px; width: min(440px, 100%); max-height: 80vh; display: flex; flex-direction: column; padding: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,.2); }
-.picker-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+.picker { background: var(--card); border-radius: 12px; width: min(440px, 100%); max-height: 85dvh; display: flex; flex-direction: column; padding: 1rem; box-shadow: 0 8px 30px rgba(0,0,0,.2); overflow: hidden; }
+/* Header + search never shrink; only the list below them scrolls. */
+.picker-head { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
 .picker-x { border: none; background: transparent; font-size: 1rem; padding: .2rem .4rem; }
-.picker-search { width: 100%; margin-bottom: .6rem; }
-.picker-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
+.picker-search { flex: 0 0 auto; width: 100%; margin-bottom: .6rem; }
+.picker-list { flex: 1 1 auto; min-height: 0; list-style: none; padding: 0; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .picker-list li { margin: 0; }
 .picker-list li button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--line); border-radius: 0; padding: .5rem .25rem; background: transparent; }
 .picker-list li button:hover { background: var(--btn-hover); }
@@ -139,4 +140,10 @@ table.menu td { text-align: left; vertical-align: top; }
   button.primary { width: 100%; }
   /* Title on its own line so the action buttons group tidily below it. */
   .copybox .row strong { flex-basis: 100%; margin: 0 0 .1rem; }
+  /* Dish picker becomes a bottom sheet: search pinned on top, list scrolls,
+     and it rides above the on-screen keyboard instead of being covered. */
+  .picker-overlay { align-items: flex-end; padding: 0; }
+  .picker { width: 100%; max-height: 80dvh; border-radius: 16px 16px 0 0; padding: 1rem .9rem calc(1rem + env(safe-area-inset-bottom)); }
+  .picker-list li button { padding: .7rem .25rem; }
+  .picker-name { font-size: 1rem; }
 }
