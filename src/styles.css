@@ -68,7 +68,11 @@ table.menu td { text-align: left; vertical-align: top; }
 /* Header + search never shrink; only the list below them scrolls. */
 .picker-head { flex: 0 0 auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
 .picker-x { border: none; background: transparent; font-size: 1rem; padding: .2rem .4rem; }
-.picker-search { flex: 0 0 auto; width: 100%; margin-bottom: .6rem; }
+/* Prominent search: accent border + icon so it doesn't read as a list row. */
+.picker-search-wrap { flex: 0 0 auto; position: relative; margin-bottom: .7rem; }
+.picker-search-icon { position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); font-size: .95rem; pointer-events: none; opacity: .8; }
+.picker-search { width: 100%; padding: .65rem .7rem .65rem 2.1rem; font-size: 1rem; border: 2px solid var(--accent); border-radius: 10px; background: var(--bg); }
+.picker-search:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); }
 .picker-list { flex: 1 1 auto; min-height: 0; list-style: none; padding: 0; margin: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .picker-list li { margin: 0; }
 .picker-list li button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--line); border-radius: 0; padding: .5rem .25rem; background: transparent; }
