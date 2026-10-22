@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest'
 import { seasonForDate } from './season'
-import { generateMenu, syncMenu } from './generate'
+import { generateMenu, syncMenu, rerollMeal, MATCH_LUNCH_ID } from './generate'
 import { buildGroceryList, groceryKey } from './grocery'
 import { groceryToText, menuToText } from './export'
 import { checkNutrition, fixRule } from './nutrition'
-import { dishById } from './dishes'
+import { dishById, poolFor } from './dishes'
 import type { AttendanceDay, WeeklyMenu } from './types'
 
 describe('seasonForDate', () => {
@@ -366,6 +366,114 @@ describe('fixRule', () => {
     expect(checkNutrition(menu).find((r) => r.id === 'legumes')!.status).toBe('warn')
     const fixed = fixRule(menu, 'legumes')
     expect(checkNutrition(fixed).find((r) => r.id === 'legumes')!.status).toBe('ok')
+  })
+})
+
+describe('match-day lunch', () => {
+  const SAT = '2026-06-20' // Saturday
+
+  it('forces a single arròs fregit lunch on a match day', () => {
+    const att: AttendanceDay[] = [
+      { date: SAT, dinar: ['adria', 'helena'], sopar: ['adria', 'helena'], match: true },
+    ]
+    const menu = generateMenu(att, 11)
+    expect(menu.days[0].dinar.segonId).toBe(MATCH_LUNCH_ID)
+    expect(menu.days[0].dinar.single).toBe('segon')
+    expect(menu.days[0].dinar.primerId).toBeNull()
+  })
+
+  it('does not force the match lunch when nobody is home for lunch', () => {
+    const att: AttendanceDay[] = [{ date: SAT, dinar: [], sopar: ['adria'], match: true }]
+    const menu = generateMenu(att, 11)
+    expect(menu.days[0].dinar.segonId).toBeNull()
+  })
+
+  it('reflects the forced lunch in the grocery list and export', () => {
+    const att: AttendanceDay[] = [
+      { date: SAT, dinar: ['adria', 'helena'], sopar: [], match: true },
+    ]
+    const menu = generateMenu(att, 11)
+    const items = Object.values(buildGroceryList(menu)).flat().map((i) => i.item)
+    expect(items).toContain('gall dindi embotit')
+    expect(menuToText(menu)).toContain('Arròs fregit amb gall dindi')
+  })
+
+  it('applies the match lunch on sync and regenerates it when cleared', () => {
+    const base: AttendanceDay[] = [
+      { date: SAT, dinar: ['adria', 'helena'], sopar: ['adria', 'helena'] },
+    ]
+    const menu = generateMenu(base, 11)
+    expect(menu.days[0].dinar.segonId).not.toBe(MATCH_LUNCH_ID)
+
+    const on = syncMenu(menu, [{ ...base[0], match: true }], 2, 11)
+    expect(on.days[0].dinar.segonId).toBe(MATCH_LUNCH_ID)
+
+    const off = syncMenu(on, [{ ...base[0], match: false }], 2, 11)
+    expect(off.days[0].dinar.segonId).not.toBe(MATCH_LUNCH_ID)
+    expect(off.days[0].dinar.segonId).toBeTruthy()
+  })
+})
+
+describe('fixedOnly dishes', () => {
+  it('are flagged and never offered by the random generator pool', () => {
+    expect(dishById(MATCH_LUNCH_ID)?.fixedOnly).toBe(true)
+    const seasons = ['primavera', 'estiu', 'tardor', 'hivern'] as const
+    const slots = ['dinar', 'sopar'] as const
+    for (const season of seasons)
+      for (const slot of slots)
+        expect(poolFor(season, slot).some((d) => d.id === MATCH_LUNCH_ID)).toBe(false)
+  })
+})
+
+describe('rerollMeal', () => {
+  it('swaps the chosen course for a different valid dish, leaving others intact', () => {
+    const menu = generateMenu(week(), 7)
+    const before = menu.days[2].dinar.segonId
+    const siblingBefore = menu.days[2].sopar.segonId
+
+    const after = rerollMeal(menu, menu.days[2].date, 'dinar', 'segon', 123)
+    expect(after.days[2].dinar.segonId).not.toBe(before) // changed
+    expect(after.days[2].sopar.segonId).toBe(siblingBefore) // untouched meal kept
+    expect(dishById(after.days[2].dinar.segonId!)?.course).toContain('segon') // valid course
+  })
+})
+
+describe('grocery rounding', () => {
+  it('rounds unit ("u") quantities up to whole numbers', () => {
+    const menu = generateMenu(week(), 3)
+    for (const it of Object.values(buildGroceryList(menu)).flat())
+      if (it.unit === 'u' && it.qty != null)
+        expect(Number.isInteger(it.qty)).toBe(true)
+  })
+})
+
+describe('groceryToText grouping', () => {
+  it('shows category headers when grouped and a sorted flat list otherwise', () => {
+    const menu = generateMenu(week(), 8)
+    const grouped = groceryToText(menu, undefined, true)
+    const flat = groceryToText(menu, undefined, false)
+
+    expect(grouped).toContain('*Verdura i fruita*') // category header
+    expect(flat).not.toContain('*Verdura i fruita*') // no headers when flat
+
+    const flatItems = flat.split('\n').filter((l) => l.startsWith('* ')).map((l) => l.slice(2))
+    expect(flatItems).toEqual([...flatItems].sort((a, b) => a.localeCompare(b)))
+  })
+})
+
+describe('menuToText single-dish', () => {
+  it('lists only the kept course', () => {
+    const menu: WeeklyMenu = {
+      season: 'estiu',
+      days: [{
+        date: '2026-07-15',
+        dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'salmo-planxa', single: 'segon' },
+        sopar: { slot: 'sopar', attendees: [], primerId: null, segonId: null },
+      }],
+    }
+    const text = menuToText(menu)
+    expect(text).toContain('Salmó a la planxa')
+    expect(text).not.toContain('Amanida verda')
   })
 })
 
