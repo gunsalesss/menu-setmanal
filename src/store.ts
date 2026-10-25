@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import type { AttendanceDay, Course, Person, PersonInfo, Slot, WeeklyMenu } from './core/types'
 import { DEFAULT_PEOPLE, MAX_PEOPLE, MIN_PEOPLE } from './core/types'
 import { generateMenu, rerollMeal, syncMenu } from './core/generate'
-import { fixRule } from './core/nutrition'
+import { applyFixChanges, type FixChange } from './core/nutrition'
 
 const PEOPLE_KEY = 'menu-people'
 
@@ -96,8 +96,8 @@ interface State {
   removePerson: (person: Person) => void
   /** Manually set a specific dish for a meal's course (from the picker). */
   setDish: (date: string, slot: Slot, course: Course, dishId: string) => void
-  /** Resolve a nutritional alert by swapping dishes in the current menu. */
-  fixNutrition: (ruleId: string) => void
+  /** Apply the nutritional-fix swaps the user accepted. */
+  applyNutritionFix: (changes: FixChange[]) => void
   /** Toggle a course as the meal's sole dish (click again to restore two courses). */
   toggleSingle: (date: string, slot: Slot, course: Course) => void
   /** Toggle a weekend "match day" in the attendance grid: lunch becomes the match-day dish. */
@@ -240,8 +240,8 @@ export const useStore = create<State>((set) => ({
       return { menu: { ...s.menu, days } }
     }),
 
-  fixNutrition: (ruleId) =>
-    set((s) => (s.menu ? { menu: fixRule(s.menu, ruleId) } : {})),
+  applyNutritionFix: (changes) =>
+    set((s) => (s.menu ? { menu: applyFixChanges(s.menu, changes) } : {})),
 
   toggleSingle: (date, slot, course) =>
     set((s) => {

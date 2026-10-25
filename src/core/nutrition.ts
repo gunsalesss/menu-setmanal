@@ -1,4 +1,5 @@
 import type { Course, Dish, Slot, Tag, WeeklyMenu } from './types'
+import { COURSES } from './types'
 import { dishById, poolFor } from './dishes'
 
 export type RuleStatus = 'ok' | 'warn'
@@ -167,8 +168,12 @@ function eatenLocs(menu: WeeklyMenu): Loc[] {
   const out: Loc[] = []
   menu.days.forEach((d, i) => {
     for (const slot of SLOTS) {
-      if (d[slot].attendees.length === 0) continue
-      out.push({ day: i, slot, course: 'primer' }, { day: i, slot, course: 'segon' })
+      const meal = d[slot]
+      if (meal.attendees.length === 0) continue
+      // Skip the course hidden by a single-dish meal: swapping it changes nothing.
+      for (const course of COURSES) {
+        if (!meal.single || meal.single === course) out.push({ day: i, slot, course })
+      }
     }
   })
   return out
@@ -213,6 +218,44 @@ export function fixRule(menu: WeeklyMenu, ruleId: string): WeeklyMenu {
     case 'veggies': return fixVeggies(menu)
     default: return menu
   }
+}
+
+/** One dish swap proposed by a nutritional fix. */
+export interface FixChange {
+  date: string
+  slot: Slot
+  course: Course
+  fromId: string | null
+  toId: string | null
+}
+
+/** The dish swaps `fixRule` would make, without applying them. */
+export function proposeFix(menu: WeeklyMenu, ruleId: string): FixChange[] {
+  const after = fixRule(menu, ruleId)
+  const out: FixChange[] = []
+  menu.days.forEach((d, i) => {
+    for (const slot of SLOTS) {
+      for (const course of COURSES) {
+        const fromId = d[slot][field(course)]
+        const toId = after.days[i][slot][field(course)]
+        if (fromId !== toId) out.push({ date: d.date, slot, course, fromId, toId })
+      }
+    }
+  })
+  return out
+}
+
+/** Apply a chosen subset of proposed swaps to the menu. */
+export function applyFixChanges(menu: WeeklyMenu, changes: FixChange[]): WeeklyMenu {
+  const days = menu.days.map((d) => {
+    let next = d
+    for (const c of changes) {
+      if (c.date !== d.date) continue
+      next = { ...next, [c.slot]: { ...next[c.slot], [field(c.course)]: c.toId } }
+    }
+    return next
+  })
+  return { ...menu, days }
 }
 
 /** Generic: keep swapping a course towards dishes matching `pred` until the rule passes. */
@@ -304,7 +347,8 @@ function fixVeggies(menu: WeeklyMenu): WeeklyMenu {
       return !dishes.some(hasVeg)
     })
     if (!dayLoc) break
-    const loc: Loc = { day: dayLoc.day, slot: dayLoc.slot, course: 'primer' }
+    const course = m.days[dayLoc.day][dayLoc.slot].single ?? 'primer'
+    const loc: Loc = { day: dayLoc.day, slot: dayLoc.slot, course }
     const repl = pickReplacement(m, loc, hasVeg)
     if (!repl) break
     m = withId(m, loc, repl)
@@ -324,7 +368,8 @@ function fixCarbs(menu: WeeklyMenu): WeeklyMenu {
     })
     if (!mealLoc) break
     let changed = false
-    for (const course of ['primer', 'segon'] as Course[]) {
+    const single = m.days[mealLoc.day][mealLoc.slot].single
+    for (const course of single ? [single] : COURSES) {
       const loc: Loc = { day: mealLoc.day, slot: mealLoc.slot, course }
       const repl = pickReplacement(m, loc, hasCarb)
       if (repl) { m = withId(m, loc, repl); changed = true; break }

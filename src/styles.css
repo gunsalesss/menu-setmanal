@@ -81,6 +81,21 @@ table.menu td { text-align: left; vertical-align: top; }
 .picker-name { font-size: .95rem; }
 .picker-seasons { font-size: .72rem; color: var(--muted); }
 .picker-empty { padding: .5rem .25rem; }
+
+/* ── Nutrition fix review dialog ─────────────────────────────────────────── */
+.fix-hint { flex: 0 0 auto; margin: 0 0 .5rem; font-size: .85rem; color: var(--muted); }
+.fix-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; list-style: none; margin: 0; padding: 0; }
+.fix-list li { border-bottom: 1px solid var(--line); }
+.fix-list label { flex-direction: row; align-items: flex-start; gap: .6rem; padding: .6rem .2rem; color: var(--ink); font-size: .9rem; cursor: pointer; }
+.fix-list label.off { opacity: .5; }
+.fix-list input[type="checkbox"] { width: 1.15rem; height: 1.15rem; flex: 0 0 auto; margin-top: .1rem; }
+.fix-meal { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.fix-swap { font-size: .85rem; }
+.fix-course { display: inline-block; min-width: 3.2rem; font-size: .65rem; text-transform: uppercase; letter-spacing: .03em; color: var(--accent); font-weight: 600; }
+.fix-from { color: var(--muted); text-decoration: line-through; }
+.fix-to { font-weight: 600; }
+.fix-actions { flex: 0 0 auto; display: flex; justify-content: flex-end; gap: .5rem; padding-top: .75rem; }
+.fix-actions .rule-fix:disabled { opacity: .45; cursor: not-allowed; }
 .grocery .hint { margin: 0 0 .75rem; font-size: .8rem; color: var(--muted); }
 .grocery-cols { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
 .grocery-cat h3 { font-size: .9rem; margin: 0 0 .4rem; color: var(--accent); }
