@@ -3,7 +3,7 @@ import { seasonForDate } from './season'
 import { generateMenu, syncMenu, rerollMeal, MATCH_LUNCH_ID } from './generate'
 import { buildGroceryList, groceryKey } from './grocery'
 import { groceryToText, menuToText } from './export'
-import { checkNutrition, fixRule } from './nutrition'
+import { checkNutrition, fixRule, proposeFix, applyFixChanges } from './nutrition'
 import { dishById, poolFor } from './dishes'
 import type { AttendanceDay, WeeklyMenu } from './types'
 
@@ -493,5 +493,59 @@ describe('groceryToText', () => {
 
     // Checking everything leaves no items (no bullets).
     expect(bullets(groceryToText(menu, allKeys))).toBe(0)
+  })
+})
+
+describe('proposeFix / applyFixChanges', () => {
+  const twoRepeats = (): WeeklyMenu => ({
+    season: 'estiu',
+    days: [
+      {
+        date: '2026-07-15',
+        dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'pollastre-planxa' },
+        sopar: { slot: 'sopar', attendees: ['adria'], primerId: 'amanida-verda', segonId: 'salmo-planxa' },
+      },
+      {
+        date: '2026-07-16',
+        dinar: { slot: 'dinar', attendees: ['adria'], primerId: 'gaspatxo', segonId: 'pollastre-planxa' },
+        sopar: { slot: 'sopar', attendees: ['adria'], primerId: 'escalivada', segonId: 'truita-francesa' },
+      },
+    ],
+  })
+
+  it('proposes swaps without changing the menu', () => {
+    const menu = twoRepeats()
+    const snapshot = JSON.stringify(menu)
+    const changes = proposeFix(menu, 'unique')
+    expect(changes.length).toBeGreaterThan(0)
+    expect(JSON.stringify(menu)).toBe(snapshot) // untouched
+    for (const c of changes) expect(c.fromId).not.toBe(c.toId)
+  })
+
+  it('applying all proposed swaps resolves the alert', () => {
+    const menu = twoRepeats()
+    const fixed = applyFixChanges(menu, proposeFix(menu, 'unique'))
+    expect(checkNutrition(fixed).find((r) => r.id === 'unique')!.status).toBe('ok')
+  })
+
+  it('applies only the chosen meals and leaves the rest as they were', () => {
+    const menu = twoRepeats()
+    const changes = proposeFix(menu, 'unique')
+    const [first, ...rest] = changes
+    const partial = applyFixChanges(menu, [first])
+    const field = first.course === 'primer' ? 'primerId' : 'segonId'
+    const day = partial.days.find((d) => d.date === first.date)!
+    expect(day[first.slot][field]).toBe(first.toId)
+    for (const c of rest) {
+      const f = c.course === 'primer' ? 'primerId' : 'segonId'
+      expect(partial.days.find((d) => d.date === c.date)![c.slot][f]).toBe(c.fromId)
+    }
+  })
+
+  it('never proposes swapping the hidden course of a single-dish meal', () => {
+    const menu = twoRepeats()
+    menu.days[0].sopar.single = 'segon' // primer (repeated amanida) is hidden
+    const changes = proposeFix(menu, 'unique')
+    expect(changes.some((c) => c.date === '2026-07-15' && c.slot === 'sopar' && c.course === 'primer')).toBe(false)
   })
 })
