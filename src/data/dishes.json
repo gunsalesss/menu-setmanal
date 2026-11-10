@@ -3127,6 +3127,13 @@
         "unit": "dent",
         "category": "verdura-fruita",
         "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
       }
     ]
   },
