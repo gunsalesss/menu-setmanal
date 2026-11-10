@@ -82,9 +82,28 @@ describe('syncMenu', () => {
 describe('grocery staples and extras', () => {
   const menu = () => generateMenu(week(), 5)
 
-  it('always includes the water staple', () => {
+  it('always includes the staples', () => {
     const items = Object.values(buildGroceryList(menu())).flat().map((i) => i.item)
-    expect(items).toContain('aigua')
+    expect(items).toEqual(expect.arrayContaining(['aigua', 'pernil', 'iogurt', 'fruits secs']))
+  })
+
+  it('lists a staple once, with the quantity, when the menu also needs it', () => {
+    const withPernil: WeeklyMenu = {
+      season: 'estiu',
+      days: [{
+        date: '2026-07-15',
+        dinar: { slot: 'dinar', attendees: ['adria', 'helena'], primerId: 'melo-pernil', segonId: 'salmo-planxa' },
+        sopar: { slot: 'sopar', attendees: [], primerId: null, segonId: null },
+      }],
+    }
+    const pernil = Object.values(buildGroceryList(withPernil)).flat().filter((i) => i.item === 'pernil')
+    expect(pernil).toHaveLength(1)
+    expect(pernil[0].qty).toBe(80)
+  })
+
+  it('ignores a hand-added item the list already has', () => {
+    const items = Object.values(buildGroceryList(menu(), ['Aigua'])).flat().map((i) => i.item.toLowerCase())
+    expect(items.filter((i) => i === 'aigua')).toHaveLength(1)
   })
 
   it('includes user-added extra items', () => {

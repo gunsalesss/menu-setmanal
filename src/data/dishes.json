@@ -32,7 +32,7 @@
         "category": "herbes-condiments"
       },
       {
-        "item": "pinyons o anacards",
+        "item": "pinyons",
         "qty": 0.5,
         "unit": "grapat",
         "category": "fruits-secs-llavors",
@@ -398,7 +398,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -530,7 +530,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -2266,7 +2266,7 @@
     ],
     "ingredients": [
       {
-        "item": "pinya natural",
+        "item": "pinya",
         "qty": 0.5,
         "unit": "u",
         "category": "verdura-fruita",
@@ -2320,7 +2320,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 0.5,
         "unit": "u",
         "category": "verdura-fruita",
@@ -2363,14 +2363,7 @@
         "scalable": true
       },
       {
-        "item": "carbassó",
-        "qty": 1,
-        "unit": "u",
-        "category": "verdura-fruita",
-        "scalable": true
-      },
-      {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -2731,7 +2724,7 @@
     ],
     "ingredients": [
       {
-        "item": "sípia",
+        "item": "sèpia",
         "qty": 400,
         "unit": "g",
         "category": "peix-carn",
@@ -2887,7 +2880,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 0.5,
         "unit": "u",
         "category": "verdura-fruita",
@@ -2994,7 +2987,7 @@
         "scalable": true
       },
       {
-        "item": "iogurt natural",
+        "item": "iogurt",
         "qty": 1,
         "unit": "u",
         "category": "lactics-ous",
@@ -3134,6 +3127,13 @@
         "unit": "dent",
         "category": "verdura-fruita",
         "scalable": true
+      },
+      {
+        "item": "tomàquet",
+        "qty": 2,
+        "unit": "u",
+        "category": "verdura-fruita",
+        "scalable": true
       }
     ]
   },
@@ -3174,7 +3174,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -3189,7 +3189,6 @@
       },
       {
         "item": "salsa de soja",
-        "unit": "cullerada",
         "category": "herbes-condiments",
         "scalable": false
       },
@@ -3223,7 +3222,7 @@
     ],
     "ingredients": [
       {
-        "item": "mongetes seques cuites (fesols)",
+        "item": "mongetes cuites",
         "qty": 350,
         "unit": "g",
         "category": "llegums-cereals",
@@ -3361,7 +3360,7 @@
     ],
     "ingredients": [
       {
-        "item": "hamburguesa de vedella",
+        "item": "hamburgueses de vedella",
         "qty": 2,
         "unit": "u",
         "category": "peix-carn",
@@ -3389,7 +3388,7 @@
         "scalable": true
       },
       {
-        "item": "cogombres agredolços",
+        "item": "cogombrets encurtits",
         "qty": 1,
         "unit": "grapat",
         "category": "altres",
@@ -3530,7 +3529,7 @@
         "scalable": true
       },
       {
-        "item": "llavors de lli o sèsam",
+        "item": "llavors de lli",
         "qty": 1,
         "unit": "cullerada",
         "category": "fruits-secs-llavors"
@@ -3579,7 +3578,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -3635,7 +3634,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -3769,7 +3768,7 @@
         "scalable": true
       },
       {
-        "item": "pebrot",
+        "item": "pebrot vermell",
         "qty": 1,
         "unit": "u",
         "category": "verdura-fruita",
@@ -3820,7 +3819,7 @@
         "scalable": true
       },
       {
-        "item": "ou",
+        "item": "ous",
         "qty": 2,
         "unit": "u",
         "category": "lactics-ous",

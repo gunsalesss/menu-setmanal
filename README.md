@@ -33,7 +33,7 @@ Funcions addicionals:
 - **🎲 Rebarrejar** o **✏️ triar** cada plat (primer o segon) individualment, i fer un àpat de **plat únic**.
 - **1–4 persones**: afegir/treure comensals i **editar els noms** (botó del capçal); s'apliquen a tota l'app i es guarden.
 - **Mode fosc** (per defecte) / clar amb un botó.
-- Afegir articles fixos o puntuals a la llista de la compra (p. ex. aigua).
+- Afegir articles puntuals a la llista de la compra; s'esborren en generar un menú nou (aigua, pernil, iogurt i fruits secs hi surten sempre).
 - **🔎 Consultar ingredients** de qualsevol plat de la base de dades.
 
 Esmorzar, mig matí i berenar es deixen com a rutines fixes (no es generen).

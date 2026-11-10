@@ -24,7 +24,12 @@ export const CATEGORY_LABELS: Record<GroceryCategory, string> = {
 }
 
 /** Items that always appear on the shopping list, regardless of the menu. */
-export const STAPLES: GroceryItem[] = [{ item: 'aigua', category: 'altres' }]
+export const STAPLES: GroceryItem[] = [
+  { item: 'aigua', category: 'altres' },
+  { item: 'pernil', category: 'peix-carn' },
+  { item: 'iogurt', category: 'lactics-ous' },
+  { item: 'fruits secs', category: 'fruits-secs-llavors' },
+]
 
 /**
  * Aggregate ingredients across all planned meals, scaled by attendees.
@@ -72,15 +77,17 @@ export function buildGroceryList(
     }
   }
 
-  // Always-on staples + user-added items (no quantity, grouped under "Altres").
+  // Always-on staples + user-added items (no quantity). Skip one the menu
+  // already needs under the same name, so it isn't listed twice.
   const manual: GroceryItem[] = [
     ...STAPLES,
     ...extras.map((e) => ({ item: e.trim(), category: 'altres' as GroceryCategory })),
   ]
+  const named = new Set([...acc.values()].map((it) => it.item.toLowerCase()))
   for (const it of manual) {
-    if (!it.item) continue
-    const key = groceryKey(it)
-    if (!acc.has(key)) acc.set(key, { item: it.item, category: it.category })
+    if (!it.item || named.has(it.item.toLowerCase())) continue
+    named.add(it.item.toLowerCase())
+    acc.set(groceryKey(it), { item: it.item, category: it.category })
   }
 
   const grouped = {} as Record<GroceryCategory, GroceryItem[]>

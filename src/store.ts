@@ -102,7 +102,10 @@ interface State {
   toggleSingle: (date: string, slot: Slot, course: Course) => void
   /** Toggle a weekend "match day" in the attendance grid: lunch becomes the match-day dish. */
   toggleMatch: (date: string) => void
-  /** Extra items the user adds to the grocery list by hand; persisted. */
+  /**
+   * Extra items the user adds to the grocery list by hand for the current menu.
+   * Persisted so a reload keeps them, but cleared when a new menu is generated.
+   */
   extraItems: string[]
   addExtraItem: (name: string) => void
   removeExtraItem: (name: string) => void
@@ -158,9 +161,17 @@ export const useStore = create<State>((set) => ({
       return { attendance, menu }
     }),
 
-  // A fresh menu starts with nothing checked off.
+  // A fresh menu starts with nothing checked off and no hand-added extras
+  // (those belong to the previous week's shopping; staples like water stay).
   generate: () =>
-    set((s) => ({ menu: generateMenu(s.attendance, undefined, s.people.length), checkedGrocery: new Set() })),
+    set((s) => {
+      try { localStorage.removeItem(EXTRA_KEY) } catch { /* ignore */ }
+      return {
+        menu: generateMenu(s.attendance, undefined, s.people.length),
+        checkedGrocery: new Set(),
+        extraItems: [],
+      }
+    }),
 
   reroll: (date, slot, course) =>
     set((s) => {
