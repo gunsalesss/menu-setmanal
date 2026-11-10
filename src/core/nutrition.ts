@@ -37,7 +37,7 @@ const VEG_TAGS: Tag[] = ['verdura', 'amanida', 'crema']
 const hasTag = (d: Dish, t: Tag) => d.tags.includes(t)
 const hasVeg = (d: Dish) => d.tags.some((t) => VEG_TAGS.includes(t))
 // Whole grains / pulses only — refined breads (e.g. pa de briox) don't count.
-const WHOLE_CARB = ['integral', 'llenti', 'cigró', 'cigro', 'fesol', 'mongeta', 'pèsol', 'pesol', 'fava', 'quinoa', 'civada', 'avena']
+const WHOLE_CARB = ['integral', 'llenti', 'cigró', 'cigro', 'fesol', 'mongeta', 'mongetes', 'pèsol', 'pesol', 'fava', 'quinoa', 'civada', 'avena']
 const hasCarb = (d: Dish) =>
   d.ingredients.some((i) => i.category === 'llegums-cereals' &&
     WHOLE_CARB.some((w) => i.item.toLowerCase().includes(w)))
