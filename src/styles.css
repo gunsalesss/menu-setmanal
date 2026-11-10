@@ -121,8 +121,12 @@ table.menu td { text-align: left; vertical-align: top; }
 .explorer-steps li { padding: .2rem 0; }
 .grocery-add { margin-top: 1rem; border-top: 1px solid var(--line); padding-top: .75rem; }
 .grocery-add input { flex: 1; min-width: 8rem; }
-.extra-chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.extra-group { margin-top: .6rem; }
+.extra-label { display: block; font-size: .72rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin-bottom: .3rem; }
+.extra-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
 .extra-chip { display: inline-flex; align-items: center; gap: .3rem; background: var(--out); border: 1px solid var(--line); border-radius: 999px; padding: .2rem .3rem .2rem .6rem; font-size: .85rem; }
+/* Permanent staple: no remove button, outlined in the accent colour. */
+.extra-chip.staple { background: transparent; border-color: var(--accent); padding-right: .6rem; }
 .extra-chip button { border: none; background: transparent; padding: 0 .2rem; font-size: .8rem; color: var(--muted); }
 .nutrition .hint { margin: 0 0 .75rem; font-size: .85rem; color: var(--muted); }
 .nutrition ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .5rem; }

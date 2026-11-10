@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../store'
-import { buildGroceryList, CATEGORY_LABELS, groceryKey } from '../core/grocery'
+import { buildGroceryList, CATEGORY_LABELS, groceryKey, STAPLES } from '../core/grocery'
 import type { GroceryCategory } from '../core/types'
 
 export function GroceryView() {
@@ -61,14 +61,28 @@ export function GroceryView() {
           />
           <button type="submit" disabled={!draft.trim()}>Afegir</button>
         </form>
-        {extraItems.length > 0 && (
+        {/* Items on the list besides the menu's: permanent staples and this week's extras. */}
+        <div className="extra-group">
+          <span className="extra-label">Sempre a la llista</span>
           <div className="extra-chips">
-            {extraItems.map((it) => (
-              <span key={it} className="extra-chip">
-                {it}
-                <button title="Treure" onClick={() => removeExtraItem(it)}>✕</button>
+            {STAPLES.map((it) => (
+              <span key={it.item} className="extra-chip staple" title="Surt sempre a la llista">
+                📌 {it.item}
               </span>
             ))}
+          </div>
+        </div>
+        {extraItems.length > 0 && (
+          <div className="extra-group">
+            <span className="extra-label">Afegits per aquest menú</span>
+            <div className="extra-chips">
+              {extraItems.map((it) => (
+                <span key={it} className="extra-chip">
+                  {it}
+                  <button title="Treure" onClick={() => removeExtraItem(it)}>✕</button>
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </div>
